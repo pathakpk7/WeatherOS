@@ -1,0 +1,104 @@
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Desktop */
+@media (min-width: 1200px) {
+    .hero-clock {
+        font-size: 8rem;
+    }
+}
+
+/* Laptop */
+@media (max-width: 1199px) and (min-width: 992px) {
+    .hero-clock {
+        font-size: 6rem;
+    }
+}
+
+/* Tablet */
+@media (max-width: 991px) and (min-width: 768px) {
+    .hero-clock {
+        font-size: 5rem;
+    }
+    
+    .header {
+        padding: 1.5rem;
+    }
+}
+
+/* Mobile Large */
+@media (max-width: 767px) and (min-width: 576px) {
+    .hero-clock {
+        font-size: 4rem;
+    }
+    
+    .header {
+        padding: 1rem;
+    }
+    
+    .logo {
+        font-size: 1.25rem;
+    }
+}
+
+/* Mobile Small */
+@media (max-width: 575px) {
+    .hero-clock {
+        font-size: 3rem;
+    }
+    
+    .header {
+        padding: 1rem;
+    }
+    
+    .logo {
+        font-size: 1rem;
+    }
+    
+    .hero-section {
+        padding: 1rem;
+    }
+
+    .search-panel {
+        right: -100%;
+        width: 100%;
+    }
+
+    .settings-panel {
+        left: -100%;
+        width: 100%;
+    }
+
+    .weather-details,
+    .hourly-forecast,
+    .daily-forecast,
+    .world-clock-section,
+    .sun-section,
+    .moon-section {
+        padding: 1rem;
+        width: 100%;
+    }
+
+    .temperature-large {
+        font-size: 3rem;
+    }
+
+    .world-clock-controls {
+        max-width: none;
+    }
+}
+
+/* Extra Small */
+@media (max-width: 375px) {
+    .hero-clock {
+        font-size: 2.5rem;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

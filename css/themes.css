@@ -1,0 +1,79 @@
+/* ===== THEME VARIATIONS ===== */
+
+/* Light Mode */
+body.light-mode {
+    --bg-primary: #f5f5f7;
+    --bg-secondary: #ffffff;
+    --text-primary: #1a1a2e;
+    --text-secondary: #4a4a5e;
+    --glass-bg: rgba(0, 0, 0, 0.05);
+    --glass-border: rgba(0, 0, 0, 0.1);
+    --shadow-light: rgba(0, 0, 0, 0.05);
+    --shadow-medium: rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .gradient-bg {
+    background: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%);
+}
+
+body.light-mode .stars-bg {
+    opacity: 0.1;
+}
+
+/* Dark Mode */
+body.dark-mode {
+    --bg-primary: #0a0a1a;
+    --bg-secondary: #1a1a2e;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0b0;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --shadow-light: rgba(0, 0, 0, 0.1);
+    --shadow-medium: rgba(0, 0, 0, 0.2);
+}
+
+/* Color Themes */
+body.theme-blue {
+    --accent-primary: #4facfe;
+    --accent-secondary: #00f2fe;
+}
+
+body.theme-green {
+    --accent-primary: #43e97b;
+    --accent-secondary: #38f9d7;
+}
+
+body.theme-orange {
+    --accent-primary: #fa709a;
+    --accent-secondary: #fee140;
+}
+
+body.theme-pink {
+    --accent-primary: #f093fb;
+    --accent-secondary: #f5576c;
+}
+
+/* Time-based Themes */
+body.theme-morning {
+    --bg-primary: #231326;
+    --bg-secondary: #ff9a56;
+    --bg-tertiary: #ff6b6b;
+}
+
+body.theme-afternoon {
+    --bg-primary: #0f172a;
+    --bg-secondary: #2563eb;
+    --bg-tertiary: #06b6d4;
+}
+
+body.theme-evening {
+    --bg-primary: #241026;
+    --bg-secondary: #fa709a;
+    --bg-tertiary: #7c2d12;
+}
+
+body.theme-night {
+    --bg-primary: #0a0a1a;
+    --bg-secondary: #1a1a2e;
+    --bg-tertiary: #0f172a;
+}
