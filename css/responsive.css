@@ -110,6 +110,17 @@
         gap: 0.85rem;
     }
 
+    .celestial-main-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .celestial-header-pills {
+        width: 100%;
+        justify-content: space-between;
+    }
+
     .celestial-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
@@ -117,12 +128,20 @@
 
     .moon-phase-card {
         padding: 1.25rem;
+    }
+
+    .moon-hero-display {
         gap: 1.25rem;
     }
 
+    .moon-visual-container {
+        width: 90px;
+        height: 90px;
+    }
+
     .moon-visual {
-        width: 72px;
-        height: 72px;
+        width: 76px;
+        height: 76px;
     }
 
     .sun-path-card {
@@ -130,7 +149,35 @@
     }
 
     .sun-svg-wrapper {
-        height: 110px;
+        height: 125px;
+    }
+
+    .solar-milestones-grid {
+        grid-template-columns: repeat(5, minmax(55px, 1fr));
+        overflow-x: auto;
+        padding-bottom: 0.25rem;
+    }
+
+    .solar-milestone-item {
+        padding: 0.55rem 0.35rem;
+    }
+
+    .milestone-badge-icon {
+        font-size: 1.05rem;
+    }
+
+    .milestone-val {
+        font-size: 0.82rem;
+    }
+
+    .lunar-synodic-rail {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.35rem;
+    }
+
+    .lunar-metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
     }
 
     .section-wrapper {

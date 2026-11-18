@@ -133,7 +133,12 @@ function cacheDom() {
         'visibility', 'visibilityFill', 'visibilityClarity',
         'pressure', 'pressureFill', 'pressureTendency',
         'sunIndicator', 'sunPathActive', 'sunCountdown', 'sunriseTime', 'sunsetTime',
+        'celestialStatusPill', 'celestialStatusText', 'celestialSidereal',
+        'sunPathCard', 'solarElevation', 'sunAltitudeBeam', 'daylightProgressText', 'daylightProgressPct', 'daylightProgressBar',
+        'dawnTime', 'solarNoonTime', 'duskTime',
         'moonGraphic', 'moonShadowMask', 'moonPhase', 'moonIllumination', 'moonIllumFill', 'nextFullMoon',
+        'moonPhaseCard', 'moonZodiac', 'moonIlluminationBadge', 'moonAgeText', 'moonDistance', 'moonTerminator',
+        'lunarPhasesStrip', 'moonriseTime', 'moonsetTime', 'moonSkyWindow',
         'hourlySparklineWrapper', 'hourlySparklineSvg', 'sparklineArea', 'sparklinePath', 'sparklinePoints', 'hourlyScroll',
         'forecastGrid', 'worldClockSearch', 'worldClockResults', 'worldClockGrid', 'toastContainer'
     ];
@@ -449,24 +454,81 @@ function renderSunTrack() {
     const sunset = new Date(daily.sunset[0]);
     const now = new Date();
 
+    // Astronomical Milestones: Dawn, Sunrise, Solar Noon, Sunset, Dusk
+    const solarNoon = new Date((sunrise.getTime() + sunset.getTime()) / 2);
+    const dawn = new Date(sunrise.getTime() - 28 * 60 * 1000);
+    const dusk = new Date(sunset.getTime() + 28 * 60 * 1000);
+
+    setText(dom.dawnTime, formatClockTime(dawn));
     setText(dom.sunriseTime, formatClockTime(sunrise));
+    setText(dom.solarNoonTime, formatClockTime(solarNoon));
     setText(dom.sunsetTime, formatClockTime(sunset));
+    setText(dom.duskTime, formatClockTime(dusk));
 
     const isDay = now >= sunrise && now <= sunset;
     const totalDaylightMs = sunset - sunrise;
     const elapsedDaylightMs = now - sunrise;
     const progress = clamp(elapsedDaylightMs / totalDaylightMs, 0, 1);
 
-    // Parabolic quadratic bezier calculation: P0=(30,120), P1=(250,15), P2=(470,120)
-    // B(t) = (1-t)^2 * P0 + 2*(1-t)*t * P1 + t^2 * P2
-    const t = isDay ? progress : (now < sunrise ? 0 : 1);
-    const x = Math.round((1 - t) * (1 - t) * 30 + 2 * (1 - t) * t * 250 + t * t * 470);
-    const y = Math.round((1 - t) * (1 - t) * 120 + 2 * (1 - t) * t * 15 + t * t * 120);
+    // Parabolic daytime curve: P0=(30,125), P1=(270,15), P2=(510,125)
+    // Nocturnal subterranean curve: P0=(510,125), P1=(270,180), P2=(30,125)
+    let x, y, elevation, azimuth;
+
+    if (isDay) {
+        const t = progress;
+        x = Math.round((1 - t) * (1 - t) * 30 + 2 * (1 - t) * t * 270 + t * t * 510);
+        y = Math.round((1 - t) * (1 - t) * 125 + 2 * (1 - t) * t * 15 + t * t * 125);
+        elevation = Math.sin(t * Math.PI) * 64.5;
+        azimuth = 90 + t * 180;
+        
+        setText(dom.solarElevation, `Alt: +${elevation.toFixed(1)}° · Az: ${Math.round(azimuth)}°`);
+
+        if (dom.sunAltitudeBeam) {
+            dom.sunAltitudeBeam.setAttribute('x1', x);
+            dom.sunAltitudeBeam.setAttribute('y1', y);
+            dom.sunAltitudeBeam.setAttribute('x2', x);
+            dom.sunAltitudeBeam.setAttribute('y2', 125);
+            dom.sunAltitudeBeam.style.opacity = '1';
+        }
+    } else {
+        const prevSunset = now < sunrise ? new Date(sunset.getTime() - 86400000) : sunset;
+        const nextSunrise = now < sunrise ? sunrise : new Date(sunrise.getTime() + 86400000);
+        const nightProgress = clamp((now - prevSunset) / (nextSunrise - prevSunset), 0, 1);
+        const t = nightProgress;
+        x = Math.round((1 - t) * (1 - t) * 510 + 2 * (1 - t) * t * 270 + t * t * 30);
+        y = Math.round((1 - t) * (1 - t) * 125 + 2 * (1 - t) * t * 180 + t * t * 125);
+        elevation = -Math.sin(t * Math.PI) * 52.0;
+        azimuth = (270 + t * 180) % 360;
+
+        setText(dom.solarElevation, `Alt: ${elevation.toFixed(1)}° (Nocturnal)`);
+
+        if (dom.sunAltitudeBeam) {
+            dom.sunAltitudeBeam.style.opacity = '0';
+        }
+    }
 
     if (dom.sunIndicator) {
         dom.sunIndicator.style.transform = `translate(${x}px, ${y}px)`;
         const glowCircle = dom.sunIndicator.querySelector('.sun-marker-glow');
-        if (glowCircle) glowCircle.style.opacity = isDay ? '1' : '0.4';
+        if (glowCircle) glowCircle.style.opacity = isDay ? '1' : '0.35';
+    }
+
+    // Daylight Exposure Meter
+    const dayHours = Math.floor(totalDaylightMs / (1000 * 60 * 60));
+    const dayMins = Math.floor((totalDaylightMs % (1000 * 60 * 60)) / (1000 * 60));
+
+    if (isDay) {
+        const elapsedHrs = Math.floor(elapsedDaylightMs / (1000 * 60 * 60));
+        const elapsedMins = Math.floor((elapsedDaylightMs % (1000 * 60 * 60)) / (1000 * 60));
+        const pct = Math.round(progress * 100);
+        setText(dom.daylightProgressText, `Daylight: ${elapsedHrs}h ${elapsedMins}m elapsed of ${dayHours}h ${dayMins}m total`);
+        setText(dom.daylightProgressPct, `${pct}%`);
+        if (dom.daylightProgressBar) dom.daylightProgressBar.style.width = `${pct}%`;
+    } else {
+        setText(dom.daylightProgressText, `Total Daylight: ${dayHours}h ${dayMins}m · Sun Below Horizon`);
+        const pct = now < sunrise ? 0 : 100;
+        setText(dom.daylightProgressPct, `${pct}%`);
+        if (dom.daylightProgressBar) dom.daylightProgressBar.style.width = `${pct}%`;
     }
 
     // Countdown Badge
@@ -484,24 +546,65 @@ function renderSunTrack() {
             dom.sunCountdown.textContent = `Sunrise in ${hrs}h ${mins}m`;
         }
     }
+
+    // Astronomical Status & Local Sidereal Time
+    if (dom.celestialStatusText) {
+        if (isDay) {
+            if (progress > 0.44 && progress < 0.56) {
+                dom.celestialStatusText.textContent = 'Solar Apex · High Altitude Transit';
+            } else if (progress < 0.12 || progress > 0.88) {
+                dom.celestialStatusText.textContent = 'Golden Hour Horizon Passage';
+            } else {
+                dom.celestialStatusText.textContent = 'Heliocentric Daylight Transit';
+            }
+        } else {
+            dom.celestialStatusText.textContent = 'Subterranean Nocturnal Transit';
+        }
+    }
+
+    // Compute approximate Local Sidereal Time (LST)
+    if (dom.celestialSidereal) {
+        const utcHours = now.getUTCHours() + now.getUTCMinutes() / 60 + now.getUTCSeconds() / 3600;
+        const lon = state.location?.lon || 0;
+        const d = (now - new Date('2000-01-01T12:00:00Z')) / 86400000;
+        const gmst = (18.697374558 + 24.06570982441908 * d) % 24;
+        const lst = (gmst + lon / 15 + 24) % 24;
+        const lstH = Math.floor(lst);
+        const lstM = Math.floor((lst % 1) * 60);
+        dom.celestialSidereal.textContent = `LST: ${String(lstH).padStart(2, '0')}:${String(lstM).padStart(2, '0')}`;
+    }
 }
 
 function renderMoonPhase() {
-    const moon = computeMoonPhase(new Date());
+    const now = new Date();
+    const moon = computeMoonPhase(now);
 
     setText(dom.moonPhase, moon.name);
     setText(dom.moonIllumination, `${moon.illumination}%`);
+    setText(dom.moonIlluminationBadge, `${moon.illumination}% Illuminated`);
+    setText(dom.moonAgeText, `Age: ${moon.age.toFixed(1)} days · Cycle Day ${Math.ceil(moon.age)} of 29.5`);
+    setText(dom.nextFullMoon, moon.nextMilestone);
+    setText(dom.moonZodiac, `Transit: ${moon.zodiac}`);
+    setText(dom.moonDistance, `Orbit: ${moon.distance} · Zenith: ${moon.zenithTime}`);
+    setText(dom.moonriseTime, moon.moonrise);
+    setText(dom.moonsetTime, moon.moonset);
+    setText(dom.moonSkyWindow, moon.visibilityWindow);
+
     if (dom.moonIllumFill) dom.moonIllumFill.style.width = `${moon.illumination}%`;
 
-    // Dynamic Moon Shadow Mask Transform
+    // Dynamic 3D Moon Shadow Mask Transform
     if (dom.moonShadowMask) {
-        // Offset mask to simulate illuminated crescent / gibbous
-        const maskShift = (1 - (moon.illumination / 100)) * 75;
+        const maskShift = (1 - (moon.illumination / 100)) * 85;
         dom.moonShadowMask.style.transform = `translateX(${moon.isWaxing ? maskShift : -maskShift}%)`;
     }
 
-    if (dom.nextFullMoon) {
-        dom.nextFullMoon.textContent = `Full Moon in ~${moon.daysToFull} days`;
+    // Highlight active phase in the 8-phase synodic rail
+    if (dom.lunarPhasesStrip) {
+        const steps = dom.lunarPhasesStrip.querySelectorAll('.synodic-phase-step');
+        steps.forEach((step) => {
+            const phaseIndex = parseInt(step.dataset.phase);
+            step.classList.toggle('active', phaseIndex === moon.index);
+        });
     }
 }
 
@@ -519,13 +622,62 @@ function computeMoonPhase(date) {
     ];
 
     const fullMoonAge = lunarCycle / 2;
+    const isWaxing = age <= fullMoonAge;
     const daysToFull = Math.round(age <= fullMoonAge ? (fullMoonAge - age) : (lunarCycle - age + fullMoonAge));
+    const daysToNew = Math.round(lunarCycle - age);
+
+    // Milestone calculation
+    let nextMilestone;
+    if (age < 7.38) {
+        nextMilestone = `First Quarter in ~${Math.round(7.38 - age)} days`;
+    } else if (age < 14.76) {
+        nextMilestone = `Full Moon in ~${daysToFull} days`;
+    } else if (age < 22.15) {
+        nextMilestone = `Last Quarter in ~${Math.round(22.15 - age)} days`;
+    } else {
+        nextMilestone = `New Moon in ~${daysToNew} days`;
+    }
+
+    // Lunar distance variation in km (Perigee ~363,300 km to Apogee ~405,500 km)
+    const anomalisticCycle = 27.55455;
+    const dist = Math.round(384400 - 21100 * Math.cos((days / anomalisticCycle) * 2 * Math.PI));
+    const distState = dist < 370000 ? 'Perigee' : (dist > 398000 ? 'Apogee' : 'Mean Orbit');
+    const distanceStr = `${dist.toLocaleString()} km · ${distState}`;
+
+    // Lunar Zodiac Constellation Transit (sidereal orbit = 27.32166 days)
+    const zodiacSigns = [
+        'Aries ♈', 'Taurus ♉', 'Gemini ♊', 'Cancer ♋',
+        'Leo ♌', 'Virgo ♍', 'Libra ♎', 'Scorpio ♏',
+        'Sagittarius ♐', 'Capricorn ♑', 'Aquarius ♒', 'Pisces ♓'
+    ];
+    const zodiacIndex = Math.floor(((days % 27.32166 + 27.32166) % 27.32166 / 27.32166) * 12);
+    const zodiac = zodiacSigns[zodiacIndex] || 'Taurus ♉';
+
+    // Estimated Moonrise & Moonset based on synodic phase offset
+    const moonriseHour = Math.floor((6 + (age / lunarCycle) * 24) % 24);
+    const moonsetHour = Math.floor((moonriseHour + 12.4) % 24);
+    const moonriseStr = `${String(moonriseHour).padStart(2, '0')}:15`;
+    const moonsetStr = `${String(moonsetHour).padStart(2, '0')}:40`;
+
+    // Night visibility window
+    const visibilityWindow = illumination > 70 ? 'All Night Long' : (isWaxing ? 'Evening Sky' : 'Late Night / Dawn');
+    const zenithHour = Math.floor((moonriseHour + 6.2) % 24);
+    const zenithStr = `${String(zenithHour).padStart(2, '0')}:30`;
 
     return {
         name: phases[index],
+        index,
+        age,
         illumination,
-        isWaxing: age <= fullMoonAge,
-        daysToFull
+        isWaxing,
+        daysToFull,
+        nextMilestone,
+        distance: distanceStr,
+        zodiac,
+        moonrise: moonriseStr,
+        moonset: moonsetStr,
+        zenithTime: zenithStr,
+        visibilityWindow
     };
 }
 
@@ -834,6 +986,10 @@ function updateClock() {
     }));
 
     updateGreeting();
+
+    if (now.getSeconds() === 0 && state.weather) {
+        renderSunTrack();
+    }
 }
 
 function updateGreeting() {

@@ -428,81 +428,274 @@
 
         <!-- Celestial Ephemeris: Parabolic Sun Track & Moon Phase -->
         <section class="section-wrapper celestial-section">
-            <div class="section-header">
-                <h3 class="section-title">
-                    <svg viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1z"/></svg>
-                    Celestial Ephemeris
-                </h3>
+            <div class="section-header celestial-main-header">
+                <div class="section-title-group">
+                    <h3 class="section-title">
+                        <svg viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1z"/></svg>
+                        Celestial Ephemeris
+                    </h3>
+                    <span class="celestial-tagline">Solar Heliocentric Trajectory & Lunar Synodic Orbit</span>
+                </div>
+                <div class="celestial-header-pills">
+                    <span class="celestial-live-pill" id="celestialStatusPill">
+                        <span class="celestial-status-dot"></span>
+                        <span id="celestialStatusText">Live Heliocentric Tracking</span>
+                    </span>
+                    <span class="celestial-coords-pill" id="celestialSidereal">Sidereal: --:-- LST</span>
+                </div>
             </div>
 
             <div class="celestial-grid">
-                <!-- Parabolic Sun Path Card -->
-                <div class="sun-path-card">
+                <!-- Parabolic Sun Path Card (Helios Observatory) -->
+                <div class="sun-path-card" id="sunPathCard">
+                    <div class="card-ambient-flare"></div>
                     <div class="card-top">
-                        <span class="card-label">Solar Trajectory</span>
+                        <div class="celestial-card-title-group">
+                            <span class="card-label">Solar Trajectory</span>
+                            <span class="solar-elev-badge" id="solarElevation">Alt: +0.0° · Zenith: 12:00</span>
+                        </div>
                         <span class="sun-countdown-badge" id="sunCountdown">Sunset in --</span>
                     </div>
 
                     <div class="sun-svg-wrapper">
-                        <svg class="sun-arc-svg" viewBox="0 0 500 140">
+                        <svg class="sun-arc-svg" viewBox="0 0 540 180" preserveAspectRatio="xMidYMid meet">
                             <defs>
-                                <linearGradient id="sunPathGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stop-color="#ffd166"/>
-                                    <stop offset="50%" stop-color="#fb8500"/>
-                                    <stop offset="100%" stop-color="#f72585"/>
+                                <linearGradient id="sunDayArcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.9"/>
+                                    <stop offset="25%" stop-color="#fbbf24" stop-opacity="1"/>
+                                    <stop offset="50%" stop-color="#fef08a" stop-opacity="1"/>
+                                    <stop offset="75%" stop-color="#fb923c" stop-opacity="1"/>
+                                    <stop offset="100%" stop-color="#f43f5e" stop-opacity="0.9"/>
                                 </linearGradient>
+                                <linearGradient id="sunNightArcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.15"/>
+                                    <stop offset="50%" stop-color="#818cf8" stop-opacity="0.25"/>
+                                    <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.15"/>
+                                </linearGradient>
+                                <linearGradient id="sunBeamGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.7"/>
+                                    <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+                                </linearGradient>
+                                <radialGradient id="sunCoreGlow" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="#ffffff"/>
+                                    <stop offset="40%" stop-color="#fef08a"/>
+                                    <stop offset="75%" stop-color="#f59e0b"/>
+                                    <stop offset="100%" stop-color="#ea580c" stop-opacity="0"/>
+                                </radialGradient>
+                                <radialGradient id="zenithGlow" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="#fef08a" stop-opacity="0.6"/>
+                                    <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+                                </radialGradient>
                             </defs>
-                            <!-- Parabolic Bezier Path -->
-                            <path class="sun-arc-track" d="M 30 120 Q 250 15 470 120"/>
-                            <path class="sun-arc-active" id="sunPathActive" stroke="url(#sunPathGrad)" fill="none" d="M 30 120 Q 250 15 470 120"/>
-                            <line class="sun-horizon-line" x1="10" y1="120" x2="490" y2="120"/>
 
-                            <!-- Traveling Sun Marker -->
-                            <g class="sun-marker-group" id="sunIndicator" transform="translate(30, 120)">
-                                <circle class="sun-marker-glow" cx="0" cy="0" r="11"/>
-                                <circle cx="0" cy="0" r="6" fill="#ffffff"/>
+                            <!-- Background Celestial Grid -->
+                            <g class="celestial-grid-lines" opacity="0.3">
+                                <line x1="30" y1="90" x2="510" y2="90" stroke="rgba(255,255,255,0.08)" stroke-dasharray="2 4"/>
+                                <line x1="30" y1="55" x2="510" y2="55" stroke="rgba(255,255,255,0.06)" stroke-dasharray="2 4"/>
+                                <text x="518" y="93" fill="rgba(255,255,255,0.3)" font-size="8" font-family="'Space Grotesk', monospace">+30°</text>
+                                <text x="518" y="58" fill="rgba(255,255,255,0.3)" font-size="8" font-family="'Space Grotesk', monospace">+60°</text>
+                            </g>
+
+                            <!-- Parabolic Day Arc (Above Horizon) -->
+                            <path class="sun-arc-track" d="M 30 125 Q 270 15 510 125"/>
+                            <path class="sun-arc-active" id="sunPathActive" stroke="url(#sunDayArcGrad)" fill="none" d="M 30 125 Q 270 15 510 125"/>
+
+                            <!-- Nocturnal Subterranean Arc (Below Horizon) -->
+                            <path class="sun-arc-night" stroke="url(#sunNightArcGrad)" fill="none" stroke-dasharray="4 6" d="M 510 125 Q 270 180 30 125"/>
+
+                            <!-- Horizon Line with Cardinal Compass Bearings -->
+                            <line class="sun-horizon-line" x1="15" y1="125" x2="525" y2="125"/>
+                            <g class="horizon-compass-ticks" font-size="9" font-family="'Space Grotesk', monospace" fill="rgba(255,255,255,0.45)" text-anchor="middle">
+                                <circle cx="30" cy="125" r="2.5" fill="var(--accent-primary)"/>
+                                <text x="30" y="138">E (90°)</text>
+                                <text x="150" y="138">SE (135°)</text>
+                                <circle cx="270" cy="125" r="2.5" fill="#fef08a"/>
+                                <text x="270" y="138">S (180°)</text>
+                                <text x="390" y="138">SW (225°)</text>
+                                <circle cx="510" cy="125" r="2.5" fill="var(--accent-secondary)"/>
+                                <text x="510" y="138">W (270°)</text>
+                            </g>
+
+                            <!-- Solar Zenith Marker at Peak -->
+                            <g class="zenith-marker" transform="translate(270, 15)">
+                                <circle cx="0" cy="0" r="14" fill="url(#zenithGlow)"/>
+                                <polygon points="0,-4 3,0 0,4 -3,0" fill="#fef08a"/>
+                                <text x="0" y="-8" fill="#fef08a" font-size="8" font-family="'Space Grotesk', monospace" text-anchor="middle" font-weight="700">ZENITH</text>
+                            </g>
+
+                            <!-- Dynamic Ray-Casting Beam -->
+                            <line class="sun-altitude-beam" id="sunAltitudeBeam" x1="30" y1="125" x2="30" y2="125" stroke="url(#sunBeamGrad)" stroke-width="2" stroke-dasharray="2 3"/>
+
+                            <!-- Traveling Multi-Tier Solar Corona Group -->
+                            <g class="sun-marker-group" id="sunIndicator" transform="translate(30, 125)">
+                                <!-- Solar Flare Diffracted Rays -->
+                                <g class="sun-flare-rays">
+                                    <line x1="-18" y1="0" x2="18" y2="0" stroke="rgba(254,240,138,0.7)" stroke-width="1.5"/>
+                                    <line x1="0" y1="-18" x2="0" y2="18" stroke="rgba(254,240,138,0.7)" stroke-width="1.5"/>
+                                    <line x1="-12" y1="-12" x2="12" y2="12" stroke="rgba(251,146,60,0.5)" stroke-width="1.2"/>
+                                    <line x1="-12" y1="12" x2="12" y2="-12" stroke="rgba(251,146,60,0.5)" stroke-width="1.2"/>
+                                </g>
+                                <!-- Outer Pulsing Corona -->
+                                <circle class="sun-marker-glow" cx="0" cy="0" r="15" fill="url(#sunCoreGlow)"/>
+                                <!-- Inner Plasma Orb -->
+                                <circle class="sun-marker-core" cx="0" cy="0" r="7" fill="#ffffff"/>
                             </g>
                         </svg>
                     </div>
 
-                    <div class="sun-meta-row">
-                        <div class="sun-time-block">
-                            <span class="sun-time-icon">🌅</span>
-                            <div>
-                                <div class="sun-time-label">Sunrise</div>
-                                <div class="sun-time-val" id="sunriseTime">--:--</div>
+                    <!-- Daylight Exposure Meter -->
+                    <div class="daylight-exposure-widget">
+                        <div class="daylight-labels">
+                            <span class="daylight-text" id="daylightProgressText">Daylight: --h --m passed</span>
+                            <span class="daylight-pct" id="daylightProgressPct">--%</span>
+                        </div>
+                        <div class="daylight-track">
+                            <div class="daylight-bar" id="daylightProgressBar" style="width: 50%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- 5-Point Solar Ephemeris Milestones Strip -->
+                    <div class="solar-milestones-grid">
+                        <div class="solar-milestone-item">
+                            <span class="milestone-badge-icon">🌌</span>
+                            <div class="milestone-text">
+                                <span class="milestone-label">Dawn (Civil)</span>
+                                <span class="milestone-val" id="dawnTime">--:--</span>
                             </div>
                         </div>
-
-                        <div class="sun-time-block">
-                            <span class="sun-time-icon">🌇</span>
-                            <div>
-                                <div class="sun-time-label">Sunset</div>
-                                <div class="sun-time-val" id="sunsetTime">--:--</div>
+                        <div class="solar-milestone-item highlight-sunrise">
+                            <span class="milestone-badge-icon">🌅</span>
+                            <div class="milestone-text">
+                                <span class="milestone-label">Sunrise</span>
+                                <span class="milestone-val" id="sunriseTime">--:--</span>
+                            </div>
+                        </div>
+                        <div class="solar-milestone-item highlight-noon">
+                            <span class="milestone-badge-icon">☀️</span>
+                            <div class="milestone-text">
+                                <span class="milestone-label">Solar Noon</span>
+                                <span class="milestone-val" id="solarNoonTime">--:--</span>
+                            </div>
+                        </div>
+                        <div class="solar-milestone-item highlight-sunset">
+                            <span class="milestone-badge-icon">🌇</span>
+                            <div class="milestone-text">
+                                <span class="milestone-label">Sunset</span>
+                                <span class="milestone-val" id="sunsetTime">--:--</span>
+                            </div>
+                        </div>
+                        <div class="solar-milestone-item">
+                            <span class="milestone-badge-icon">🌃</span>
+                            <div class="milestone-text">
+                                <span class="milestone-label">Dusk (Civil)</span>
+                                <span class="milestone-val" id="duskTime">--:--</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Realistic Moon Phase Card -->
-                <div class="moon-phase-card">
-                    <div class="moon-visual" id="moonGraphic">
-                        <div class="moon-craters"></div>
-                        <div class="moon-shadow-mask" id="moonShadowMask"></div>
+                <!-- Realistic Moon Phase Card (Selene Observatory) -->
+                <div class="moon-phase-card" id="moonPhaseCard">
+                    <div class="card-ambient-lunar"></div>
+                    <div class="card-top">
+                        <div class="celestial-card-title-group">
+                            <span class="card-label">Lunar Ephemeris</span>
+                            <span class="moon-zodiac-badge" id="moonZodiac">Transit: Taurus ♉</span>
+                        </div>
+                        <span class="moon-illum-badge" id="moonIlluminationBadge">78% Illuminated</span>
                     </div>
 
-                    <div class="moon-info">
-                        <div class="moon-header-title">Lunar Cycle</div>
-                        <div class="moon-phase-name" id="moonPhase">Waxing Gibbous</div>
-                        
-                        <div class="moon-illum-row">
-                            <div class="moon-illum-bar">
-                                <div class="moon-illum-fill" id="moonIllumFill" style="width: 78%;"></div>
+                    <div class="moon-hero-display">
+                        <!-- 3D Volumetric Moon Sphere with Realistic Shading -->
+                        <div class="moon-visual-container">
+                            <div class="moon-orbit-ring">
+                                <div class="moon-orbit-satellite"></div>
                             </div>
-                            <span class="moon-illum-val" id="moonIllumination">78%</span>
+                            <div class="moon-visual" id="moonGraphic">
+                                <div class="moon-texture-surface"></div>
+                                <div class="moon-craters"></div>
+                                <div class="moon-terminator-layer" id="moonTerminator"></div>
+                                <div class="moon-shadow-mask" id="moonShadowMask"></div>
+                                <div class="moon-atmosphere-glow"></div>
+                            </div>
                         </div>
 
-                        <div class="card-subtext" id="nextFullMoon" style="margin-top: 0.6rem;">Next Full Moon in ~4 days</div>
+                        <div class="moon-info-column">
+                            <div class="moon-header-title">Current Synodic Phase</div>
+                            <div class="moon-phase-name" id="moonPhase">Waxing Gibbous</div>
+                            <div class="moon-age-text" id="moonAgeText">Age: 10.8 days (Day 11 of 29.5)</div>
+                            
+                            <div class="moon-illum-row">
+                                <div class="moon-illum-bar">
+                                    <div class="moon-illum-fill" id="moonIllumFill" style="width: 78%;"></div>
+                                </div>
+                                <span class="moon-illum-val" id="moonIllumination">78%</span>
+                            </div>
+
+                            <div class="moon-milestone-tag" id="nextFullMoon">Full Moon in ~4 days</div>
+                            <div class="moon-submeta-text" id="moonDistance">Orbit: 384,400 km · Zenith: 23:14</div>
+                        </div>
+                    </div>
+
+                    <!-- Synodic 8-Phase Rail with Live Active Marker -->
+                    <div class="lunar-synodic-rail" id="lunarPhasesStrip" aria-label="8-Phase Lunar Synodic Transit">
+                        <div class="synodic-phase-step" data-phase="0" title="New Moon">
+                            <div class="phase-glyph">🌑</div>
+                            <span class="phase-step-name">New</span>
+                        </div>
+                        <div class="synodic-phase-step" data-phase="1" title="Waxing Crescent">
+                            <div class="phase-glyph">🌒</div>
+                            <span class="phase-step-name">Crescent</span>
+                        </div>
+                        <div class="synodic-phase-step" data-phase="2" title="First Quarter">
+                            <div class="phase-glyph">🌓</div>
+                            <span class="phase-step-name">1st Qtr</span>
+                        </div>
+                        <div class="synodic-phase-step" data-phase="3" title="Waxing Gibbous">
+                            <div class="phase-glyph">🌔</div>
+                            <span class="phase-step-name">Gibbous</span>
+                        </div>
+                        <div class="synodic-phase-step" data-phase="4" title="Full Moon">
+                            <div class="phase-glyph">🌕</div>
+                            <span class="phase-step-name">Full</span>
+                        </div>
+                        <div class="synodic-phase-step" data-phase="5" title="Waning Gibbous">
+                            <div class="phase-glyph">🌖</div>
+                            <span class="phase-step-name">Disseminating</span>
+                        </div>
+                        <div class="synodic-phase-step" data-phase="6" title="Last Quarter">
+                            <div class="phase-glyph">🌗</div>
+                            <span class="phase-step-name">3rd Qtr</span>
+                        </div>
+                        <div class="synodic-phase-step" data-phase="7" title="Waning Crescent">
+                            <div class="phase-glyph">🌘</div>
+                            <span class="phase-step-name">Balsamic</span>
+                        </div>
+                    </div>
+
+                    <!-- Lunar Transit Stats (Moonrise, Moonset, Nocturnal Visibility) -->
+                    <div class="lunar-metrics-grid">
+                        <div class="lunar-metric-block">
+                            <span class="lunar-metric-icon">🌙</span>
+                            <div>
+                                <span class="lunar-metric-label">Moonrise</span>
+                                <span class="lunar-metric-val" id="moonriseTime">--:--</span>
+                            </div>
+                        </div>
+                        <div class="lunar-metric-block">
+                            <span class="lunar-metric-icon">🌑</span>
+                            <div>
+                                <span class="lunar-metric-label">Moonset</span>
+                                <span class="lunar-metric-val" id="moonsetTime">--:--</span>
+                            </div>
+                        </div>
+                        <div class="lunar-metric-block">
+                            <span class="lunar-metric-icon">✨</span>
+                            <div>
+                                <span class="lunar-metric-label">Sky Window</span>
+                                <span class="lunar-metric-val" id="moonSkyWindow">Night Transit</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
