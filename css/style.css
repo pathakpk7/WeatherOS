@@ -1123,17 +1123,20 @@ body {
 .drawer-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    backdrop-filter: blur(6px);
-    z-index: 1000;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1040;
     opacity: 0;
     visibility: hidden;
+    pointer-events: none;
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .drawer-backdrop.active {
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
 }
 
 .search-panel,
@@ -1143,14 +1146,15 @@ body {
     bottom: 0;
     width: 380px;
     max-width: 90vw;
-    background: rgba(15, 23, 42, 0.88);
-    backdrop-filter: blur(28px) saturate(180%);
-    z-index: 1001;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    background: rgba(13, 20, 36, 0.95);
+    backdrop-filter: blur(32px) saturate(200%);
+    -webkit-backdrop-filter: blur(32px) saturate(200%);
+    z-index: 1050;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     padding: 1.75rem;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.4);
     overflow-y: auto;
 }
 

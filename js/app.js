@@ -283,7 +283,10 @@ async function fetchAirQuality(location) {
     }
 }
 
-async function loadWeather(location) {
+async function loadWeather(location, saveToRecent = false) {
+    if (!location || !Number.isFinite(Number(location.lat)) || !Number.isFinite(Number(location.lon))) {
+        location = DEFAULT_LOCATION;
+    }
     state.location = location;
     setLoadingState(true);
 
@@ -295,7 +298,9 @@ async function loadWeather(location) {
 
         state.weather = forecast;
         state.airQuality = airQuality;
-        addRecentSearch(location);
+        if (saveToRecent) {
+            addRecentSearch(location);
+        }
         updateLocationBadges();
         renderWeather();
         renderForecasts();
@@ -919,8 +924,8 @@ function initSearch() {
     dom.searchToggle?.addEventListener('click', openSearchDrawer);
     dom.closeSearch?.addEventListener('click', closeSearchDrawer);
     dom.detectLocationBtn?.addEventListener('click', () => {
-        detectUserLocation(true);
         closeSearchDrawer();
+        detectUserLocation(true);
     });
     dom.clearSearch?.addEventListener('click', () => {
         if (dom.citySearch) {
@@ -962,6 +967,7 @@ function initSearch() {
 }
 
 function openSearchDrawer() {
+    closeSettingsDrawer();
     dom.searchPanel?.classList.add('open');
     dom.drawerBackdrop?.classList.add('active');
     setTimeout(() => dom.citySearch?.focus(), 150);
@@ -1012,7 +1018,7 @@ function renderSearchResults(results) {
                 lat: parseFloat(btn.dataset.lat),
                 lon: parseFloat(btn.dataset.lon)
             };
-            loadWeather(loc);
+            loadWeather(loc, true);
             closeSearchDrawer();
         });
     });
@@ -1042,7 +1048,7 @@ function renderRecentSearches() {
                 country: btn.dataset.country,
                 lat: parseFloat(btn.dataset.lat),
                 lon: parseFloat(btn.dataset.lon)
-            });
+            }, true);
             closeSearchDrawer();
         });
     });
@@ -1168,7 +1174,7 @@ function initSettings() {
     dom.countrySelect?.addEventListener('change', (e) => {
         const country = COUNTRY_CHOICES[e.target.value];
         if (country) {
-            loadWeather(country);
+            loadWeather(country, true);
             closeSettingsDrawer();
         }
     });
@@ -1185,16 +1191,16 @@ function initSettings() {
     });
 
     dom.refreshBtn?.addEventListener('click', () => {
-        if (state.location) loadWeather(state.location);
+        if (state.location) loadWeather(state.location, false);
     });
 
     dom.placeGpsBtn?.addEventListener('click', () => {
-        detectUserLocation(true);
         closeSettingsDrawer();
+        detectUserLocation(true);
     });
 
     dom.locationBadge?.addEventListener('click', () => {
-        detectUserLocation(true);
+        openSearchDrawer();
     });
 
     applySettings();
@@ -1202,6 +1208,7 @@ function initSettings() {
 }
 
 function openSettingsDrawer() {
+    closeSearchDrawer();
     dom.settingsPanel?.classList.add('open');
     dom.drawerBackdrop?.classList.add('active');
 }
@@ -1409,8 +1416,7 @@ function initGlobalShortcuts() {
 // ===== HIGH-PRECISION REVERSE GEOCODING & MULTI-TIER LOCATION DETECTION =====
 async function reverseGeocode(lat, lon) {
     try {
-        const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}`);
-        const data = await res.json();
+        const data = await fetchJsonWithTimeout(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}`, 5000);
         const city = data.city || data.locality || data.principalSubdivision || '';
         const country = data.countryName || '';
         return {
@@ -1424,36 +1430,49 @@ async function reverseGeocode(lat, lon) {
 }
 
 async function detectLocationByIp() {
-    // Primary IP Geolocation Provider: ipwho.is
+    // Primary: ipwho.is (fast, CORS-open, HTTPS)
     try {
-        const res = await fetch('https://ipwho.is/');
-        const data = await res.json();
-        if (data.success && data.latitude && data.longitude) {
+        const data = await fetchJsonWithTimeout('https://ipwho.is/', 4000);
+        if (data && data.success && data.latitude && data.longitude) {
             return {
                 name: data.city || data.region || 'Local Area',
                 country: data.country || '',
-                lat: data.latitude,
-                lon: data.longitude
+                lat: parseFloat(data.latitude),
+                lon: parseFloat(data.longitude)
             };
         }
     } catch (e) {
-        console.warn('ipwho.is lookup failed, trying backup:', e);
+        console.warn('ipwho.is lookup failed:', e);
     }
 
-    // Secondary Backup Provider: geolocation-db
+    // Secondary: freeipapi.com (open HTTPS API)
     try {
-        const res = await fetch('https://geolocation-db.com/json/');
-        const data = await res.json();
-        if (data.latitude && data.longitude) {
+        const data = await fetchJsonWithTimeout('https://freeipapi.com/api/json', 4000);
+        if (data && data.latitude && data.longitude) {
             return {
-                name: data.city || data.state || 'Local Area',
-                country: data.country_name || '',
-                lat: data.latitude,
-                lon: data.longitude
+                name: data.cityName || data.regionName || 'Local Area',
+                country: data.countryName || '',
+                lat: parseFloat(data.latitude),
+                lon: parseFloat(data.longitude)
             };
         }
     } catch (e) {
-        console.warn('geolocation-db lookup failed:', e);
+        console.warn('freeipapi lookup failed:', e);
+    }
+
+    // Tertiary: ipapi.co
+    try {
+        const data = await fetchJsonWithTimeout('https://ipapi.co/json/', 4000);
+        if (data && data.latitude && data.longitude) {
+            return {
+                name: data.city || data.region || 'Local Area',
+                country: data.country_name || '',
+                lat: parseFloat(data.latitude),
+                lon: parseFloat(data.longitude)
+            };
+        }
+    } catch (e) {
+        console.warn('ipapi.co lookup failed:', e);
     }
 
     return null;
@@ -1461,68 +1480,68 @@ async function detectLocationByIp() {
 
 async function detectUserLocation(interactive = false) {
     if (interactive) {
-        showToast('Acquiring high-precision coordinates...', 'warning');
+        showToast('Acquiring atmospheric coordinates...', 'warning');
     }
 
-    let gpsResolved = false;
+    let resolved = false;
 
-    // Check if browser supports Geolocation API
-    if (navigator.geolocation) {
+    const applyLocation = (loc, method = 'network') => {
+        if (!loc || !Number.isFinite(Number(loc.lat)) || !Number.isFinite(Number(loc.lon))) return;
+        if (resolved && method === 'network') return;
+        resolved = true;
+        loadWeather(loc, false);
+        if (interactive) {
+            showToast(`Location locked: ${loc.name}${loc.country ? `, ${loc.country}` : ''}`, 'success');
+        }
+    };
+
+    // Fast initial IP resolution: runs in parallel to show instant weather
+    detectLocationByIp().then(ipLoc => {
+        if (ipLoc && !resolved) {
+            applyLocation(ipLoc, 'network');
+        }
+    }).catch(err => console.warn('Instant IP location error:', err));
+
+    // Browser Geolocation API for GPS-level precision
+    if (typeof navigator !== 'undefined' && navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             async (pos) => {
-                gpsResolved = true;
                 const lat = pos.coords.latitude;
                 const lon = pos.coords.longitude;
                 const geo = await reverseGeocode(lat, lon);
-                loadWeather({
-                    name: geo.name,
-                    country: geo.country,
+                applyLocation({
+                    name: geo.name || 'Current Location',
+                    country: geo.country || '',
                     lat: lat,
                     lon: lon
-                });
-                if (interactive) {
-                    showToast(`Location locked: ${geo.name}${geo.country ? `, ${geo.country}` : ''}`, 'success');
-                }
+                }, 'gps');
             },
             async (err) => {
-                console.warn('GPS location unavailable or declined:', err.message);
-                if (interactive) {
-                    showToast('GPS unavailable. Detecting via network IP...', 'warning');
-                }
-                const ipLoc = await detectLocationByIp();
-                if (ipLoc) {
-                    loadWeather(ipLoc);
-                    if (interactive) {
-                        showToast(`Located via network: ${ipLoc.name}, ${ipLoc.country}`, 'success');
+                console.warn('Browser GPS declined or unavailable:', err.message);
+                if (!resolved) {
+                    const fallbackIp = await detectLocationByIp();
+                    if (fallbackIp) {
+                        applyLocation(fallbackIp, 'network');
+                    } else if (!state.location) {
+                        loadWeather(DEFAULT_LOCATION, false);
                     }
-                } else if (!state.location) {
-                    loadWeather(DEFAULT_LOCATION);
                 }
             },
-            { timeout: 8000, maximumAge: 120000, enableHighAccuracy: true }
+            { timeout: 7000, maximumAge: 60000, enableHighAccuracy: true }
         );
-    }
-
-    // On non-interactive initial startup: fire IP detection immediately so the dashboard
-    // populates the user's real local weather within 300ms without blocking on the GPS prompt!
-    if (!interactive) {
-        const ipLoc = await detectLocationByIp();
-        if (ipLoc && !gpsResolved && !state.location) {
-            loadWeather(ipLoc);
+    } else {
+        if (!resolved) {
+            const fallbackIp = await detectLocationByIp();
+            if (fallbackIp) {
+                applyLocation(fallbackIp, 'network');
+            } else if (!state.location) {
+                loadWeather(DEFAULT_LOCATION, false);
+            }
         }
     }
 }
 
 function initGeolocation() {
-    // If user already has a saved search or preferred location, load that first
-    if (state.recentSearches && state.recentSearches.length > 0) {
-        const last = state.recentSearches[0];
-        if (last && last.lat && last.lon) {
-            loadWeather(last);
-            return;
-        }
-    }
-
     detectUserLocation(false);
 }
 

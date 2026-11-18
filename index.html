@@ -55,6 +55,155 @@
     <!-- Drawer Backdrop Overlay -->
     <div class="drawer-backdrop" id="drawerBackdrop"></div>
 
+    <!-- Search Drawer Panel -->
+    <aside class="search-panel" id="searchPanel" aria-label="Search cities">
+        <div class="panel-header">
+            <h2>Explore Locations</h2>
+            <button class="close-panel-btn" id="closeSearch" type="button" aria-label="Close search">×</button>
+        </div>
+        <div class="search-input-wrapper">
+            <input type="text" id="citySearch" placeholder="Search city, capital, or coords..." autocomplete="off" aria-label="Search city or coordinates">
+            <button class="clear-search" id="clearSearch" type="button" aria-label="Clear search input">×</button>
+        </div>
+        <button class="detect-location-btn" id="detectLocationBtn" type="button" aria-label="Detect current location">
+            <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+            <span>Use Current Location</span>
+        </button>
+        <div class="search-results" id="searchResults"></div>
+    </aside>
+
+    <!-- Settings Drawer Panel -->
+    <aside class="settings-panel" id="settingsPanel" aria-label="System Settings">
+        <div class="panel-header">
+            <h2>Preferences</h2>
+            <button class="close-panel-btn" id="closeSettings" type="button" aria-label="Close settings">×</button>
+        </div>
+        <div class="settings-content">
+            <div class="setting-group">
+                <label for="placeSearch">Default Location</label>
+                <div class="place-control">
+                    <input type="text" id="placeSearch" placeholder="City or coordinates" autocomplete="off">
+                    <button type="button" id="placeApply">Apply</button>
+                    <button type="button" id="placeGpsBtn" class="gps-icon-btn" title="Detect My Location">
+                        <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+                    </button>
+                </div>
+                <div class="current-place" id="currentPlace">Using detected location</div>
+            </div>
+
+            <div class="setting-group">
+                <label for="countrySelect">Preset Nations</label>
+                <select id="countrySelect" class="select-control">
+                    <option value="">Select country...</option>
+                    <option value="IN">India (New Delhi)</option>
+                    <option value="GB">United Kingdom (London)</option>
+                    <option value="US">United States (Washington)</option>
+                    <option value="JP">Japan (Tokyo)</option>
+                    <option value="AU">Australia (Canberra)</option>
+                    <option value="AE">United Arab Emirates (Abu Dhabi)</option>
+                    <option value="SG">Singapore</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label>Interface Theme</label>
+                <div class="theme-options">
+                    <button class="theme-btn active" type="button" data-theme="auto">Adaptive</button>
+                    <button class="theme-btn" type="button" data-theme="light">Light</button>
+                    <button class="theme-btn" type="button" data-theme="dark">Dark</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label>Temperature Unit</label>
+                <div class="unit-options">
+                    <button class="unit-btn active" type="button" data-unit="celsius">Celsius (°C)</button>
+                    <button class="unit-btn" type="button" data-unit="fahrenheit">Fahrenheit (°F)</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label>
+                    <span>24-Hour Time Format</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="timeFormatToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="setting-group">
+                <label>
+                    <span>Interactive Micro-Animations</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="animationsToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="setting-group">
+                <label>
+                    <span>Weather Particles (Rain/Snow/Stars)</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="particlesToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="setting-group">
+                <label>
+                    <span>Aurora Borealis Effect</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="auroraToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="setting-group">
+                <label>
+                    <span>Volumetric Background Effects</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="backgroundToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="setting-group">
+                <label>
+                    <span>Ambient Procedural Audio</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="ambientSoundsToggle">
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="setting-group">
+                <label for="soundVolumeRange">Sound Volume <span id="soundVolumeValue">35%</span></label>
+                <input class="range-control" type="range" id="soundVolumeRange" min="0" max="100" value="35">
+            </div>
+
+            <div class="setting-group">
+                <label for="glassBlurRange">Frosted Glass Blur <span id="glassBlurValue">14px</span></label>
+                <input class="range-control" type="range" id="glassBlurRange" min="0" max="28" value="14">
+            </div>
+
+            <div class="setting-group">
+                <label>
+                    <span>Reduce Motion Accessibility</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="reduceMotionToggle">
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
+            </div>
+        </div>
+    </aside>
+
     <!-- Main OS Shell -->
     <div class="main-container" id="mainContainer">
         
@@ -97,155 +246,6 @@
                 </button>
             </div>
         </header>
-
-        <!-- Search Drawer Panel -->
-        <aside class="search-panel" id="searchPanel" aria-label="Search cities">
-            <div class="panel-header">
-                <h2>Explore Locations</h2>
-                <button class="close-panel-btn" id="closeSearch" type="button" aria-label="Close search">×</button>
-            </div>
-            <div class="search-input-wrapper">
-                <input type="text" id="citySearch" placeholder="Search city, capital, or coords..." autocomplete="off" aria-label="Search city or coordinates">
-                <button class="clear-search" id="clearSearch" type="button" aria-label="Clear search input">×</button>
-            </div>
-            <button class="detect-location-btn" id="detectLocationBtn" type="button" aria-label="Detect current location">
-                <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
-                <span>Use Current Location</span>
-            </button>
-            <div class="search-results" id="searchResults"></div>
-        </aside>
-
-        <!-- Settings Drawer Panel -->
-        <aside class="settings-panel" id="settingsPanel" aria-label="System Settings">
-            <div class="panel-header">
-                <h2>Preferences</h2>
-                <button class="close-panel-btn" id="closeSettings" type="button" aria-label="Close settings">×</button>
-            </div>
-            <div class="settings-content">
-                <div class="setting-group">
-                    <label for="placeSearch">Default Location</label>
-                    <div class="place-control">
-                        <input type="text" id="placeSearch" placeholder="City or coordinates" autocomplete="off">
-                        <button type="button" id="placeApply">Apply</button>
-                        <button type="button" id="placeGpsBtn" class="gps-icon-btn" title="Detect My Location">
-                            <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
-                        </button>
-                    </div>
-                    <div class="current-place" id="currentPlace">Using detected location</div>
-                </div>
-
-                <div class="setting-group">
-                    <label for="countrySelect">Preset Nations</label>
-                    <select id="countrySelect" class="select-control">
-                        <option value="">Select country...</option>
-                        <option value="IN">India (New Delhi)</option>
-                        <option value="GB">United Kingdom (London)</option>
-                        <option value="US">United States (Washington)</option>
-                        <option value="JP">Japan (Tokyo)</option>
-                        <option value="AU">Australia (Canberra)</option>
-                        <option value="AE">United Arab Emirates (Abu Dhabi)</option>
-                        <option value="SG">Singapore</option>
-                    </select>
-                </div>
-
-                <div class="setting-group">
-                    <label>Interface Theme</label>
-                    <div class="theme-options">
-                        <button class="theme-btn active" type="button" data-theme="auto">Adaptive</button>
-                        <button class="theme-btn" type="button" data-theme="light">Light</button>
-                        <button class="theme-btn" type="button" data-theme="dark">Dark</button>
-                    </div>
-                </div>
-
-                <div class="setting-group">
-                    <label>Temperature Unit</label>
-                    <div class="unit-options">
-                        <button class="unit-btn active" type="button" data-unit="celsius">Celsius (°C)</button>
-                        <button class="unit-btn" type="button" data-unit="fahrenheit">Fahrenheit (°F)</button>
-                    </div>
-                </div>
-
-                <div class="setting-group">
-                    <label>
-                        <span>24-Hour Time Format</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="timeFormatToggle" checked>
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="setting-group">
-                    <label>
-                        <span>Interactive Micro-Animations</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="animationsToggle" checked>
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="setting-group">
-                    <label>
-                        <span>Weather Particles (Rain/Snow/Stars)</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="particlesToggle" checked>
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="setting-group">
-                    <label>
-                        <span>Aurora Borealis Effect</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="auroraToggle" checked>
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="setting-group">
-                    <label>
-                        <span>Volumetric Background Effects</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="backgroundToggle" checked>
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="setting-group">
-                    <label>
-                        <span>Ambient Procedural Audio</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="ambientSoundsToggle">
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="setting-group">
-                    <label for="soundVolumeRange">Sound Volume <span id="soundVolumeValue">35%</span></label>
-                    <input class="range-control" type="range" id="soundVolumeRange" min="0" max="100" value="35">
-                </div>
-
-                <div class="setting-group">
-                    <label for="glassBlurRange">Frosted Glass Blur <span id="glassBlurValue">14px</span></label>
-                    <input class="range-control" type="range" id="glassBlurRange" min="0" max="28" value="14">
-                </div>
-
-                <div class="setting-group">
-                    <label>
-                        <span>Reduce Motion Accessibility</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="reduceMotionToggle">
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </label>
-                </div>
-            </div>
-        </aside>
 
         <!-- Hero Stage: Live Clock, 3D Weather Orb & Primary Readout -->
         <section class="hero-section">
