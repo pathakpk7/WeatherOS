@@ -117,8 +117,8 @@ function cacheDom() {
     const ids = [
         'loadingScreen', 'loadingProgress', 'backgroundLayer', 'particlesContainer', 'lightningFlash', 'drawerBackdrop',
         'settingsToggle', 'closeSettings', 'settingsPanel', 'searchToggle', 'closeSearch', 'searchPanel',
-        'citySearch', 'clearSearch', 'searchResults', 'placeSearch', 'placeApply', 'currentPlace', 'countrySelect',
-        'refreshBtn', 'locationBadge', 'currentPlaceHeader',
+        'citySearch', 'clearSearch', 'searchResults', 'placeSearch', 'placeApply', 'placeGpsBtn', 'currentPlace', 'countrySelect',
+        'refreshBtn', 'locationBadge', 'currentPlaceHeader', 'detectLocationBtn',
         'unitToggleInline', 'timeFormatToggleInline', 'timeFormatToggle',
         'ambientSoundBtn', 'ambientSoundsToggle', 'soundVolumeRange', 'soundVolumeValue',
         'animationsToggle', 'particlesToggle', 'auroraToggle', 'backgroundToggle', 'reduceMotionToggle',
@@ -918,6 +918,10 @@ function updateBackgroundTheme(meta) {
 function initSearch() {
     dom.searchToggle?.addEventListener('click', openSearchDrawer);
     dom.closeSearch?.addEventListener('click', closeSearchDrawer);
+    dom.detectLocationBtn?.addEventListener('click', () => {
+        detectUserLocation(true);
+        closeSearchDrawer();
+    });
     dom.clearSearch?.addEventListener('click', () => {
         if (dom.citySearch) {
             dom.citySearch.value = '';
@@ -1184,7 +1188,14 @@ function initSettings() {
         if (state.location) loadWeather(state.location);
     });
 
-    dom.locationBadge?.addEventListener('click', openSearchDrawer);
+    dom.placeGpsBtn?.addEventListener('click', () => {
+        detectUserLocation(true);
+        closeSettingsDrawer();
+    });
+
+    dom.locationBadge?.addEventListener('click', () => {
+        detectUserLocation(true);
+    });
 
     applySettings();
     syncSettingsUi();
@@ -1395,26 +1406,124 @@ function initGlobalShortcuts() {
     });
 }
 
-function initGeolocation() {
-    if (!navigator.geolocation) {
-        loadWeather(DEFAULT_LOCATION);
-        return;
+// ===== HIGH-PRECISION REVERSE GEOCODING & MULTI-TIER LOCATION DETECTION =====
+async function reverseGeocode(lat, lon) {
+    try {
+        const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}`);
+        const data = await res.json();
+        const city = data.city || data.locality || data.principalSubdivision || '';
+        const country = data.countryName || '';
+        return {
+            name: city || 'Local Area',
+            country: country
+        };
+    } catch (e) {
+        console.warn('Reverse geocoding failed:', e);
+        return { name: 'Local Area', country: '' };
+    }
+}
+
+async function detectLocationByIp() {
+    // Primary IP Geolocation Provider: ipwho.is
+    try {
+        const res = await fetch('https://ipwho.is/');
+        const data = await res.json();
+        if (data.success && data.latitude && data.longitude) {
+            return {
+                name: data.city || data.region || 'Local Area',
+                country: data.country || '',
+                lat: data.latitude,
+                lon: data.longitude
+            };
+        }
+    } catch (e) {
+        console.warn('ipwho.is lookup failed, trying backup:', e);
     }
 
-    navigator.geolocation.getCurrentPosition(
-        (pos) => {
-            loadWeather({
-                name: 'Current Location',
-                country: '',
-                lat: pos.coords.latitude,
-                lon: pos.coords.longitude
-            });
-        },
-        () => {
-            loadWeather(DEFAULT_LOCATION);
-        },
-        { timeout: 7000, maximumAge: 600000 }
-    );
+    // Secondary Backup Provider: geolocation-db
+    try {
+        const res = await fetch('https://geolocation-db.com/json/');
+        const data = await res.json();
+        if (data.latitude && data.longitude) {
+            return {
+                name: data.city || data.state || 'Local Area',
+                country: data.country_name || '',
+                lat: data.latitude,
+                lon: data.longitude
+            };
+        }
+    } catch (e) {
+        console.warn('geolocation-db lookup failed:', e);
+    }
+
+    return null;
+}
+
+async function detectUserLocation(interactive = false) {
+    if (interactive) {
+        showToast('Acquiring high-precision coordinates...', 'warning');
+    }
+
+    let gpsResolved = false;
+
+    // Check if browser supports Geolocation API
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+                gpsResolved = true;
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                const geo = await reverseGeocode(lat, lon);
+                loadWeather({
+                    name: geo.name,
+                    country: geo.country,
+                    lat: lat,
+                    lon: lon
+                });
+                if (interactive) {
+                    showToast(`Location locked: ${geo.name}${geo.country ? `, ${geo.country}` : ''}`, 'success');
+                }
+            },
+            async (err) => {
+                console.warn('GPS location unavailable or declined:', err.message);
+                if (interactive) {
+                    showToast('GPS unavailable. Detecting via network IP...', 'warning');
+                }
+                const ipLoc = await detectLocationByIp();
+                if (ipLoc) {
+                    loadWeather(ipLoc);
+                    if (interactive) {
+                        showToast(`Located via network: ${ipLoc.name}, ${ipLoc.country}`, 'success');
+                    }
+                } else if (!state.location) {
+                    loadWeather(DEFAULT_LOCATION);
+                }
+            },
+            { timeout: 8000, maximumAge: 120000, enableHighAccuracy: true }
+        );
+    }
+
+    // On non-interactive initial startup: fire IP detection immediately so the dashboard
+    // populates the user's real local weather within 300ms without blocking on the GPS prompt!
+    if (!interactive) {
+        const ipLoc = await detectLocationByIp();
+        if (ipLoc && !gpsResolved && !state.location) {
+            loadWeather(ipLoc);
+        }
+    }
+}
+
+function initGeolocation() {
+    // If user already has a saved search or preferred location, load that first
+    if (state.recentSearches && state.recentSearches.length > 0) {
+        const last = state.recentSearches[0];
+        if (last && last.lat && last.lon) {
+            loadWeather(last);
+            return;
+        }
+    }
+
+    detectUserLocation(false);
 }
 
 document.addEventListener('DOMContentLoaded', () => {

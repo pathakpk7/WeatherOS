@@ -1212,7 +1212,56 @@ body {
 /* Search input controls */
 .search-input-wrapper {
     position: relative;
+    margin-bottom: 0.85rem;
+}
+
+.detect-location-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-quinary);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
     margin-bottom: 1.25rem;
+    transition: all 0.25s ease;
+}
+
+.detect-location-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    transition: transform 0.3s ease;
+}
+
+.detect-location-btn:hover {
+    background: var(--accent-primary);
+    color: #ffffff;
+    box-shadow: 0 4px 16px var(--shadow-glow);
+    transform: translateY(-2px);
+}
+
+.detect-location-btn:active {
+    transform: scale(0.98);
+}
+
+.gps-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.75rem !important;
+}
+
+.gps-icon-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
 }
 
 .search-input-wrapper input {
