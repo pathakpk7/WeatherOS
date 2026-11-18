@@ -1,17 +1,10 @@
-/* ===== ANIMATIONS ===== */
+/* ===== WEATHEROS ANIMATIONS ENGINE ===== */
+/* Hardware-accelerated, high-fidelity micro-interactions and ambient keyframes */
+
 @keyframes fadeIn {
     from {
         opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(12px);
     }
     to {
         opacity: 1;
@@ -19,12 +12,36 @@
     }
 }
 
-@keyframes pulse {
-    0%, 100% {
-        opacity: 1;
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(32px);
     }
-    50% {
-        opacity: 0.5;
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }
 
@@ -37,16 +54,27 @@
     }
 }
 
-@keyframes glow {
+@keyframes gentleSway {
     0%, 100% {
-        box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        transform: rotate(-3deg) translateY(0);
     }
     50% {
-        box-shadow: 0 0 40px rgba(102, 126, 234, 0.6);
+        transform: rotate(3deg) translateY(-6px);
     }
 }
 
-@keyframes rotate {
+@keyframes pulseGlow {
+    0%, 100% {
+        opacity: 0.6;
+        filter: drop-shadow(0 0 16px var(--accent-primary));
+    }
+    50% {
+        opacity: 0.95;
+        filter: drop-shadow(0 0 32px var(--accent-secondary));
+    }
+}
+
+@keyframes orbitRotate {
     from {
         transform: rotate(0deg);
     }
@@ -55,40 +83,231 @@
     }
 }
 
-@keyframes blink {
+@keyframes orbitRotate3dEquator {
+    from {
+        transform: rotateX(72deg) rotateZ(0deg);
+    }
+    to {
+        transform: rotateX(72deg) rotateZ(360deg);
+    }
+}
+
+@keyframes orbitRotate3dInclined {
+    from {
+        transform: rotateX(45deg) rotateY(30deg) rotateZ(0deg);
+    }
+    to {
+        transform: rotateX(45deg) rotateY(30deg) rotateZ(-360deg);
+    }
+}
+
+@keyframes auroraBorealis {
     0%, 100% {
-        opacity: 1;
+        transform: translate(0, 0) scale(1);
+        filter: blur(40px) hue-rotate(0deg);
+    }
+    33% {
+        transform: translate(3%, -3%) scale(1.08);
+        filter: blur(48px) hue-rotate(25deg);
+    }
+    66% {
+        transform: translate(-3%, 3%) scale(0.96);
+        filter: blur(36px) hue-rotate(-20deg);
+    }
+}
+
+@keyframes gradientMorph {
+    0% {
+        background-position: 0% 50%;
     }
     50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes starsTwinkle {
+    0%, 100% {
+        opacity: 0.25;
+        transform: scale(0.98);
+    }
+    50% {
+        opacity: 0.65;
+        transform: scale(1.02);
+    }
+}
+
+@keyframes shootingStar {
+    0% {
+        transform: translate(0, 0) rotate(-45deg) scale(0);
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+        transform: translate(-80px, 80px) rotate(-45deg) scale(1);
+    }
+    85% {
+        opacity: 0.9;
+        transform: translate(-350px, 350px) rotate(-45deg) scale(0.8);
+    }
+    100% {
+        transform: translate(-500px, 500px) rotate(-45deg) scale(0);
         opacity: 0;
     }
 }
 
-/* ===== ANIMATION UTILITIES ===== */
+@keyframes cloudsVolumetric {
+    from {
+        transform: translateX(-15%);
+    }
+    to {
+        transform: translateX(15%);
+    }
+}
+
+@keyframes lightningFlashEffect {
+    0% {
+        opacity: 0;
+    }
+    3% {
+        opacity: 0.85;
+    }
+    6% {
+        opacity: 0.15;
+    }
+    9% {
+        opacity: 0.95;
+    }
+    16% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes rainParticleFall {
+    0% {
+        transform: translate(0, -30px);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.8;
+    }
+    90% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(var(--drift, 40px), 105vh);
+        opacity: 0;
+    }
+}
+
+@keyframes snowParticleFall {
+    0% {
+        transform: translate(0, -20px) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.9;
+    }
+    50% {
+        transform: translate(var(--drift-mid, 25px), 50vh) rotate(180deg);
+    }
+    100% {
+        transform: translate(var(--drift-end, -25px), 105vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes sunbeamShimmer {
+    0%, 100% {
+        opacity: 0.12;
+        transform: rotate(-15deg) translateY(-2%);
+    }
+    50% {
+        opacity: 0.28;
+        transform: rotate(-12deg) translateY(2%);
+    }
+}
+
+@keyframes digitPop {
+    0% {
+        opacity: 0.4;
+        transform: translateY(10px) scale(0.96);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes soundWaveBar1 {
+    0%, 100% { height: 4px; }
+    50% { height: 16px; }
+}
+
+@keyframes soundWaveBar2 {
+    0%, 100% { height: 14px; }
+    50% { height: 6px; }
+}
+
+@keyframes soundWaveBar3 {
+    0%, 100% { height: 8px; }
+    50% { height: 18px; }
+}
+
+@keyframes rippleWave {
+    0% {
+        transform: scale(0.85);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1.4);
+        opacity: 0;
+    }
+}
+
+@keyframes shimmerTrack {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes liquidWobble {
+    0%, 100% {
+        border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+    }
+    33% {
+        border-radius: 70% 30% 46% 54% / 30% 29% 71% 70%;
+    }
+    66% {
+        border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%;
+    }
+}
+
+/* ===== UTILITY ANIMATION CLASSES ===== */
 .fade-in {
-    animation: fadeIn 0.5s ease forwards;
+    animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .slide-up {
-    animation: slideUp 0.6s ease forwards;
+    animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.pulse {
-    animation: pulse 2s ease infinite;
+.float-slow {
+    animation: float 4s ease-in-out infinite;
 }
 
-.float {
-    animation: float 3s ease-in-out infinite;
+.digit-pop {
+    animation: digitPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.glow {
-    animation: glow 2s ease-in-out infinite;
-}
-
-.rotate {
-    animation: rotate 10s linear infinite;
-}
-
-.blink {
-    animation: blink 1s step-end infinite;
+.in-view {
+    animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

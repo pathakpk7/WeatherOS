@@ -1,0 +1,765 @@
+/* ===== CINEMATIC WEATHEROS EXPERIENCE ===== */
+/* Bespoke 3D celestial sphere, interactive gauges, parabolic sun arc, and specular lighting */
+
+:root {
+    --orb-size: 210px;
+    --orb-glow-color: rgba(255, 183, 3, 0.45);
+    --orb-core-grad: radial-gradient(circle at 35% 30%, #ffd166 0%, #fb8500 45%, #d90429 100%);
+    --card-spotlight: radial-gradient(circle 300px at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(255, 255, 255, 0.07), transparent 70%);
+}
+
+/* ===== 3D INTERACTIVE WEATHER ORB ===== */
+.weather-orb-container {
+    width: var(--orb-size);
+    height: var(--orb-size);
+    margin: 1.5rem auto;
+    position: relative;
+    perspective: 1200px;
+    cursor: grab;
+    user-select: none;
+}
+
+.weather-orb-container:active {
+    cursor: grabbing;
+}
+
+.weather-orb {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.15s cubic-bezier(0.2, 0, 0.2, 1);
+    will-change: transform;
+}
+
+.weather-orb.orb-hovered {
+    filter: brightness(1.1);
+}
+
+/* Atmospheric Outer Aura */
+.orb-atmosphere {
+    position: absolute;
+    inset: -35px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--orb-glow-color) 0%, transparent 68%);
+    filter: blur(28px);
+    opacity: 0.7;
+    pointer-events: none;
+    transition: all 0.8s ease;
+}
+
+/* Luminous Core Sphere */
+.orb-core {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--orb-core-grad);
+    box-shadow: 
+        inset -22px -22px 45px rgba(0, 0, 0, 0.5),
+        inset 16px 16px 32px rgba(255, 255, 255, 0.3),
+        0 0 50px var(--orb-glow-color);
+    transition: background 1.2s ease, box-shadow 1.2s ease;
+    overflow: hidden;
+}
+
+/* Glass Specular Glare / Lens Reflection */
+.orb-specular {
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.08) 32%, transparent 60%);
+    pointer-events: none;
+    z-index: 4;
+}
+
+/* Subtle Breathing Corona Glow */
+.orb-glow {
+    position: absolute;
+    inset: -15px;
+    border-radius: 50%;
+    border: 2px solid var(--orb-glow-color);
+    filter: blur(8px);
+    opacity: 0.6;
+    pointer-events: none;
+    transition: border-color 0.8s ease;
+}
+
+/* Celestial Orbital Rings */
+.orb-ring {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    transition: border-color 0.8s ease;
+}
+
+.orb-ring-equator {
+    inset: -22px;
+    border: 1.5px dashed rgba(255, 255, 255, 0.28);
+    transform: rotateX(72deg);
+    animation: orbitRotate3dEquator 16s linear infinite;
+}
+
+.orb-ring-inclined {
+    inset: -14px;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    transform: rotateX(45deg) rotateY(30deg);
+    animation: orbitRotate3dInclined 22s linear infinite;
+}
+
+.orb-pulse-ring {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    animation: rippleWave 3s ease-out infinite;
+    pointer-events: none;
+}
+
+/* Internal Weather Particle Simulation */
+.orb-particles {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.orb-rain-drop {
+    position: absolute;
+    width: 2px;
+    height: 12px;
+    background: linear-gradient(180deg, transparent, #38bdf8);
+    border-radius: 2px;
+    animation: rainDropInside 0.6s linear infinite;
+}
+
+@keyframes rainDropInside {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.9;
+    }
+    to {
+        transform: translateY(220px);
+        opacity: 0;
+    }
+}
+
+.orb-snow-flake {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #caf0f8;
+    animation: snowFlakeInside 2.5s ease-in-out infinite;
+}
+
+@keyframes snowFlakeInside {
+    0%, 100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0.3;
+    }
+    50% {
+        transform: translateY(14px) translateX(8px);
+        opacity: 0.9;
+    }
+}
+
+.orb-storm-spark {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #ffbe0b;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #f72585;
+    animation: sparkFlash 1.2s ease-in-out infinite;
+}
+
+@keyframes sparkFlash {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    40%, 60% {
+        opacity: 1;
+        transform: scale(1.6);
+    }
+}
+
+.orb-solar-ember {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #ffd166;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #ff6b35;
+    animation: solarEmberDrift 3s ease-in-out infinite;
+}
+
+@keyframes solarEmberDrift {
+    0%, 100% {
+        transform: translateY(0) scale(0.8);
+        opacity: 0.4;
+    }
+    50% {
+        transform: translateY(-16px) translateX(6px) scale(1.2);
+        opacity: 0.95;
+    }
+}
+
+/* Weather-Specific Orb Palettes */
+.weather-orb.weather-clear {
+    --orb-glow-color: rgba(251, 133, 0, 0.45);
+    --orb-core-grad: radial-gradient(circle at 35% 30%, #ffd166 0%, #fb8500 50%, #e63946 100%);
+}
+
+.weather-orb.weather-rain {
+    --orb-glow-color: rgba(56, 189, 248, 0.5);
+    --orb-core-grad: radial-gradient(circle at 35% 30%, #67e8f9 0%, #0284c7 50%, #1e1b4b 100%);
+}
+
+.weather-orb.weather-storm {
+    --orb-glow-color: rgba(168, 85, 247, 0.6);
+    --orb-core-grad: radial-gradient(circle at 35% 30%, #c084fc 0%, #6b21a8 50%, #0f172a 100%);
+}
+
+.weather-orb.weather-snow {
+    --orb-glow-color: rgba(165, 243, 252, 0.5);
+    --orb-core-grad: radial-gradient(circle at 35% 30%, #ffffff 0%, #7dd3fc 50%, #312e81 100%);
+}
+
+.weather-orb.weather-clouds {
+    --orb-glow-color: rgba(148, 163, 184, 0.4);
+    --orb-core-grad: radial-gradient(circle at 35% 30%, #f1f5f9 0%, #64748b 50%, #1e293b 100%);
+}
+
+.weather-orb.weather-fog {
+    --orb-glow-color: rgba(203, 213, 225, 0.35);
+    --orb-core-grad: radial-gradient(circle at 35% 30%, #e2e8f0 0%, #94a3b8 50%, #334155 100%);
+}
+
+
+/* ===== PARABOLIC SUN PATH ARC ===== */
+.sun-path-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 1.8rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.sun-path-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--card-spotlight);
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+.sun-svg-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    margin: 0.5rem auto 1rem;
+    height: 140px;
+}
+
+.sun-arc-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.sun-arc-track {
+    stroke: rgba(255, 255, 255, 0.15);
+    stroke-width: 3;
+    stroke-dasharray: 4 4;
+}
+
+.sun-arc-active {
+    stroke-width: 4;
+    filter: drop-shadow(0 0 8px rgba(255, 183, 3, 0.6));
+    transition: stroke-dashoffset 0.8s ease;
+}
+
+.sun-horizon-line {
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 1.5;
+}
+
+.sun-marker-group {
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sun-marker-glow {
+    fill: #ffd166;
+    filter: drop-shadow(0 0 14px #fb8500);
+    animation: pulseGlow 2.5s ease-in-out infinite;
+}
+
+.sun-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.sun-time-block {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.sun-time-icon {
+    font-size: 1.4rem;
+}
+
+.sun-time-label {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.sun-time-val {
+    font-family: 'Space Grotesk', monospace;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--text-primary);
+}
+
+.sun-countdown-badge {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--glass-border);
+    padding: 0.4rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--accent-quinary);
+    font-weight: 600;
+    backdrop-filter: blur(8px);
+}
+
+
+/* ===== REALISTIC MOON PHASE WIDGET ===== */
+.moon-phase-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 1.8rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    transition: all 0.3s ease;
+}
+
+.moon-phase-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--card-spotlight);
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+.moon-visual {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    position: relative;
+    background: radial-gradient(circle at 35% 35%, #f8fafc 0%, #cbd5e1 50%, #475569 100%);
+    box-shadow: 
+        inset -8px -8px 18px rgba(0, 0, 0, 0.65),
+        inset 6px 6px 12px rgba(255, 255, 255, 0.4),
+        0 0 28px rgba(203, 213, 225, 0.35);
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+/* Crater Simulation via SVG Overlay */
+.moon-craters {
+    position: absolute;
+    inset: 0;
+    opacity: 0.35;
+    background-image: 
+        radial-gradient(circle 9px at 28% 42%, #334155 70%, transparent 80%),
+        radial-gradient(circle 14px at 64% 32%, #334155 70%, transparent 80%),
+        radial-gradient(circle 8px at 45% 72%, #334155 70%, transparent 80%),
+        radial-gradient(circle 6px at 75% 65%, #334155 70%, transparent 80%);
+}
+
+.moon-shadow-mask {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(10, 10, 25, 0.88);
+    transition: transform 0.6s ease;
+}
+
+.moon-info {
+    flex: 1;
+}
+
+.moon-header-title {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+}
+
+.moon-phase-name {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+}
+
+.moon-illum-row {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+.moon-illum-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.moon-illum-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #67e8f9, #a855f7);
+    border-radius: 999px;
+    transition: width 1s ease;
+}
+
+.moon-illum-val {
+    font-family: 'Space Grotesk', monospace;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+}
+
+
+/* ===== HOURLY FORECAST SPARKLINE ===== */
+.hourly-sparkline-container {
+    width: 100%;
+    height: 90px;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.hourly-sparkline-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.sparkline-line {
+    fill: none;
+    stroke: var(--accent-quinary);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 6px rgba(76, 201, 240, 0.6));
+}
+
+.sparkline-fill {
+    fill: url(#sparklineGradient);
+    opacity: 0.45;
+}
+
+.sparkline-point {
+    fill: #ffffff;
+    stroke: var(--accent-quinary);
+    stroke-width: 2.5;
+    r: 4;
+    transition: r 0.2s ease, fill 0.2s ease;
+    cursor: pointer;
+}
+
+.sparkline-point:hover {
+    r: 6.5;
+    fill: var(--accent-primary);
+}
+
+
+/* ===== 7-DAY TEMPERATURE SPECTRUM BARS ===== */
+.forecast-spectrum-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.spectrum-temp-low,
+.spectrum-temp-high {
+    font-family: 'Space Grotesk', monospace;
+    font-weight: 700;
+    font-size: 0.9rem;
+    min-width: 28px;
+}
+
+.spectrum-temp-low {
+    color: var(--text-secondary);
+    text-align: right;
+}
+
+.spectrum-temp-high {
+    color: var(--text-primary);
+    text-align: left;
+}
+
+.spectrum-bar-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    position: relative;
+    overflow: hidden;
+}
+
+.spectrum-bar-fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #38bdf8 0%, #facc15 50%, #f97316 100%);
+    transition: left 0.8s ease, width 0.8s ease;
+}
+
+.spectrum-bar-pip {
+    position: absolute;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1.5px solid #0f172a;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+    z-index: 2;
+}
+
+
+/* ===== AERODYNAMIC WIND COMPASS ROSE ===== */
+.wind-compass-wrapper {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1.5px solid var(--glass-border);
+    position: relative;
+    margin: 0.5rem auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.4);
+}
+
+.compass-cardinal {
+    position: absolute;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.cardinal-n { top: 4px; left: 50%; transform: translateX(-50%); color: var(--accent-primary); }
+.cardinal-e { right: 5px; top: 50%; transform: translateY(-50%); }
+.cardinal-s { bottom: 4px; left: 50%; transform: translateX(-50%); }
+.cardinal-w { left: 5px; top: 50%; transform: translateY(-50%); }
+
+.compass-needle-pivot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 48px;
+    transform: translate(-50%, -50%) rotate(0deg);
+    transform-origin: center center;
+    transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+}
+
+.compass-needle-north {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 22px solid var(--accent-primary);
+    filter: drop-shadow(0 0 4px var(--accent-primary));
+}
+
+.compass-needle-south {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 22px solid rgba(255, 255, 255, 0.4);
+}
+
+.compass-center-pin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    background: #ffffff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+    z-index: 3;
+}
+
+
+/* ===== CIRCULAR AQI GAUGE ===== */
+.aqi-gauge-wrapper {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    margin: 0.35rem auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.aqi-gauge-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.aqi-circle-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.12);
+    stroke-width: 6;
+}
+
+.aqi-circle-fill {
+    fill: none;
+    stroke: var(--accent-quinary);
+    stroke-width: 6.5;
+    stroke-linecap: round;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    transition: stroke-dashoffset 1.2s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.6s ease;
+    filter: drop-shadow(0 0 6px var(--accent-quinary));
+}
+
+.aqi-gauge-val {
+    position: absolute;
+    font-family: 'Space Grotesk', monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+
+/* ===== UV INDEX METER ===== */
+.uv-meter-wrapper {
+    margin-top: 0.75rem;
+}
+
+.uv-segmented-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    position: relative;
+    overflow: hidden;
+}
+
+.uv-segmented-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4ade80 0%, #facc15 35%, #fb923c 65%, #f43f5e 85%, #a855f7 100%);
+    border-radius: 999px;
+    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.uv-badge-tag {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-top: 0.35rem;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+}
+
+
+/* ===== AMBIENT SOUND EQUALIZER BUTTON ===== */
+.sound-toggle-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    backdrop-filter: blur(8px);
+    color: var(--text-primary);
+}
+
+.sound-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: var(--accent-primary);
+    transform: scale(1.05);
+}
+
+.sound-bar {
+    width: 3px;
+    height: 4px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: height 0.3s ease;
+}
+
+.sound-toggle-btn.playing {
+    border-color: var(--accent-quinary);
+    color: var(--accent-quinary);
+    box-shadow: 0 0 16px rgba(76, 201, 240, 0.4);
+}
+
+.sound-toggle-btn.playing .sound-bar:nth-child(1) {
+    animation: soundWaveBar1 0.75s ease-in-out infinite alternate;
+}
+
+.sound-toggle-btn.playing .sound-bar:nth-child(2) {
+    animation: soundWaveBar2 0.65s ease-in-out infinite alternate 0.15s;
+}
+
+.sound-toggle-btn.playing .sound-bar:nth-child(3) {
+    animation: soundWaveBar3 0.85s ease-in-out infinite alternate 0.3s;
+}

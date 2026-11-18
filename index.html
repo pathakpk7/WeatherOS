@@ -3,307 +3,585 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WeatherOS - Premium Weather Dashboard</title>
-    <link rel="stylesheet" href="css/style.css">
+    <meta name="theme-color" content="#090d16">
+    <meta name="description" content="WeatherOS - High-fidelity animated weather operating system with 3D celestial orb, live ephemeris, and procedural audio.">
+    <title>WeatherOS - Atmospheric Dashboard</title>
+    
+    <!-- Design System Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheets in Strict Cascading Order -->
     <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/cinematic.css">
     <link rel="stylesheet" href="css/themes.css">
     <link rel="stylesheet" href="css/responsive.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="weather-clear theme-afternoon">
     <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-content">
-            <div class="loading-text">WeatherOS</div>
+            <div class="loading-brand">
+                <span class="loading-text">WeatherOS</span>
+            </div>
             <div class="loading-bar">
                 <div class="loading-progress" id="loadingProgress"></div>
             </div>
         </div>
     </div>
 
-    <!-- Background Layer -->
+    <!-- Living Atmospheric Background Layers -->
     <div class="background-layer" id="backgroundLayer">
         <div class="gradient-bg"></div>
         <div class="aurora-bg"></div>
-        <div class="stars-bg"></div>
+        <div class="stars-bg">
+            <div class="shooting-star"></div>
+        </div>
+        <div class="clouds-layer"></div>
+        <div class="rain-layer"></div>
+        <div class="fog-layer"></div>
+        <div class="noise-texture"></div>
+        <div class="glass-reflections"></div>
     </div>
 
-    <!-- Particle Container -->
+    <!-- Ambient Lightning Flash Overlay -->
+    <div class="lightning-flash-overlay" id="lightningFlash"></div>
+
+    <!-- Atmospheric Particle Container -->
     <div class="particles-container" id="particlesContainer"></div>
 
-    <!-- Main Container -->
+    <!-- Drawer Backdrop Overlay -->
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+    <!-- Main OS Shell -->
     <div class="main-container" id="mainContainer">
-        <!-- Header -->
+        
+        <!-- Glass Floating Header -->
         <header class="header">
-            <button class="settings-toggle" id="settingsToggle" type="button" aria-label="Open settings">
-                <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.65.07-.98s-.02-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.37-.31-.6-.22l-2.49 1a7.3 7.3 0 0 0-1.7-.98L14.5 2.42A.5.5 0 0 0 14 2h-4a.5.5 0 0 0-.5.42L9.13 5.07c-.61.24-1.18.56-1.7.98l-2.49-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .12.64l2.11 1.65a7.8 7.8 0 0 0 0 1.96l-2.11 1.65a.5.5 0 0 0-.12.64l2 3.46c.12.22.37.31.6.22l2.49-1c.52.4 1.09.73 1.7.98l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.61-.25 1.18-.58 1.7-.98l2.49 1c.23.09.48 0 .6-.22l2-3.46a.5.5 0 0 0-.12-.64l-2.11-1.65zM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5z"/></svg>
-            </button>
-            <div class="logo">WeatherOS</div>
-            <button class="search-toggle" id="searchToggle" type="button" aria-label="Open city search">
-                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 11.99 14 9.5 14z"/></svg>
-            </button>
+            <div class="header-left">
+                <button class="icon-btn settings-toggle" id="settingsToggle" type="button" aria-label="Open settings drawer" title="Settings">
+                    <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.65.07-.98s-.02-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.37-.31-.6-.22l-2.49 1a7.3 7.3 0 0 0-1.7-.98L14.5 2.42A.5.5 0 0 0 14 2h-4a.5.5 0 0 0-.5.42L9.13 5.07c-.61.24-1.18.56-1.7.98l-2.49-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .12.64l2.11 1.65a7.8 7.8 0 0 0 0 1.96l-2.11 1.65a.5.5 0 0 0-.12.64l2 3.46c.12.22.37.31.6.22l2.49-1c.52.4 1.09.73 1.7.98l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.61-.25 1.18-.58 1.7-.98l2.49 1c.23.09.48 0 .6-.22l2-3.46a.5.5 0 0 0-.12-.64l-2.11-1.65zM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5z"/></svg>
+                </button>
+                <button class="sound-toggle-btn" id="ambientSoundBtn" type="button" aria-label="Toggle ambient procedural audio" title="Ambient Weather Audio">
+                    <span class="sound-bar"></span>
+                    <span class="sound-bar"></span>
+                    <span class="sound-bar"></span>
+                </button>
+            </div>
+
+            <div class="header-center">
+                <div class="logo">
+                    <span>WeatherOS</span>
+                    <span class="logo-dot"></span>
+                </div>
+                <div class="location-pill" id="locationBadge" role="button" tabindex="0" title="Click to change location">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+                    <span id="currentPlaceHeader">Detecting location...</span>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <button class="icon-btn refresh-btn" id="refreshBtn" type="button" aria-label="Refresh weather data" title="Refresh weather">
+                    <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                </button>
+                <button class="pill-toggle" id="unitToggleInline" type="button" aria-label="Toggle temperature unit" title="Switch °C / °F">°C</button>
+                <button class="pill-toggle" id="timeFormatToggleInline" type="button" aria-label="Toggle time format" title="Switch 12H / 24H">
+                    <span class="format-label">24H</span>
+                </button>
+                <button class="search-toggle-btn" id="searchToggle" type="button" aria-label="Open search drawer">
+                    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    <span>Search</span>
+                    <kbd class="search-shortcut-kbd">/</kbd>
+                </button>
+            </div>
         </header>
 
-        <!-- Search Panel -->
-        <div class="search-panel" id="searchPanel">
+        <!-- Search Drawer Panel -->
+        <aside class="search-panel" id="searchPanel" aria-label="Search cities">
+            <div class="panel-header">
+                <h2>Explore Locations</h2>
+                <button class="close-panel-btn" id="closeSearch" type="button" aria-label="Close search">×</button>
+            </div>
             <div class="search-input-wrapper">
-                <input type="text" id="citySearch" placeholder="Search city or coordinates..." autocomplete="off" aria-label="Search city or coordinates">
-                <button class="clear-search" id="clearSearch" type="button" aria-label="Clear search">×</button>
+                <input type="text" id="citySearch" placeholder="Search city, capital, or coords..." autocomplete="off" aria-label="Search city or coordinates">
+                <button class="clear-search" id="clearSearch" type="button" aria-label="Clear search input">×</button>
             </div>
             <div class="search-results" id="searchResults"></div>
-        </div>
+        </aside>
 
-        <!-- Settings Panel -->
-        <div class="settings-panel" id="settingsPanel">
-            <div class="settings-header">
-                <h2>Settings</h2>
-                <button class="close-settings" id="closeSettings" type="button" aria-label="Close settings">×</button>
+        <!-- Settings Drawer Panel -->
+        <aside class="settings-panel" id="settingsPanel" aria-label="System Settings">
+            <div class="panel-header">
+                <h2>Preferences</h2>
+                <button class="close-panel-btn" id="closeSettings" type="button" aria-label="Close settings">×</button>
             </div>
             <div class="settings-content">
                 <div class="setting-group">
-                    <label for="placeSearch">Place</label>
+                    <label for="placeSearch">Default Location</label>
                     <div class="place-control">
-                        <input type="text" id="placeSearch" placeholder="City, country, or coordinates" autocomplete="off">
+                        <input type="text" id="placeSearch" placeholder="City or coordinates" autocomplete="off">
                         <button type="button" id="placeApply">Apply</button>
                     </div>
                     <div class="current-place" id="currentPlace">Using detected location</div>
                 </div>
+
                 <div class="setting-group">
-                    <label for="countrySelect">Country</label>
+                    <label for="countrySelect">Preset Nations</label>
                     <select id="countrySelect" class="select-control">
                         <option value="">Select country...</option>
-                        <option value="IN">India</option>
-                        <option value="GB">United Kingdom</option>
-                        <option value="US">United States</option>
-                        <option value="JP">Japan</option>
-                        <option value="AU">Australia</option>
-                        <option value="AE">United Arab Emirates</option>
+                        <option value="IN">India (New Delhi)</option>
+                        <option value="GB">United Kingdom (London)</option>
+                        <option value="US">United States (Washington)</option>
+                        <option value="JP">Japan (Tokyo)</option>
+                        <option value="AU">Australia (Canberra)</option>
+                        <option value="AE">United Arab Emirates (Abu Dhabi)</option>
                         <option value="SG">Singapore</option>
                     </select>
                 </div>
+
                 <div class="setting-group">
-                    <label>Theme</label>
+                    <label>Interface Theme</label>
                     <div class="theme-options">
-                        <button class="theme-btn active" type="button" data-theme="auto">Auto</button>
+                        <button class="theme-btn active" type="button" data-theme="auto">Adaptive</button>
                         <button class="theme-btn" type="button" data-theme="light">Light</button>
                         <button class="theme-btn" type="button" data-theme="dark">Dark</button>
                     </div>
                 </div>
+
                 <div class="setting-group">
-                    <label>Time Format</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="timeFormatToggle" checked>
-                        <span>24 Hour</span>
-                    </div>
-                </div>
-                <div class="setting-group">
-                    <label>Temperature</label>
+                    <label>Temperature Unit</label>
                     <div class="unit-options">
-                        <button class="unit-btn active" type="button" data-unit="celsius">°C</button>
-                        <button class="unit-btn" type="button" data-unit="fahrenheit">°F</button>
+                        <button class="unit-btn active" type="button" data-unit="celsius">Celsius (°C)</button>
+                        <button class="unit-btn" type="button" data-unit="fahrenheit">Fahrenheit (°F)</button>
                     </div>
                 </div>
+
                 <div class="setting-group">
-                    <label>Animations</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="animationsToggle" checked>
-                        <span>Enabled</span>
-                    </div>
+                    <label>
+                        <span>24-Hour Time Format</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="timeFormatToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </label>
                 </div>
+
                 <div class="setting-group">
-                    <label>Particles</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="particlesToggle" checked>
-                        <span>Enabled</span>
-                    </div>
+                    <label>
+                        <span>Interactive Micro-Animations</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="animationsToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </label>
                 </div>
+
                 <div class="setting-group">
-                    <label>Aurora</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="auroraToggle" checked>
-                        <span>Enabled</span>
-                    </div>
+                    <label>
+                        <span>Weather Particles (Rain/Snow/Stars)</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="particlesToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </label>
                 </div>
+
                 <div class="setting-group">
-                    <label>Background Effects</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="backgroundToggle" checked>
-                        <span>Enabled</span>
-                    </div>
+                    <label>
+                        <span>Aurora Borealis Effect</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="auroraToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </label>
                 </div>
+
                 <div class="setting-group">
-                    <label>Reduce Motion</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="reduceMotionToggle">
-                        <span>Enabled</span>
-                    </div>
+                    <label>
+                        <span>Volumetric Background Effects</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="backgroundToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </label>
                 </div>
+
                 <div class="setting-group">
-                    <label>Ambient Sounds</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="ambientSoundsToggle">
-                        <span>Enabled</span>
-                    </div>
+                    <label>
+                        <span>Ambient Procedural Audio</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="ambientSoundsToggle">
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </label>
                 </div>
+
                 <div class="setting-group">
-                    <label for="glassBlurRange">Glass Blur <span id="glassBlurValue">10px</span></label>
-                    <input class="range-control" type="range" id="glassBlurRange" min="0" max="24" value="10">
+                    <label for="soundVolumeRange">Sound Volume <span id="soundVolumeValue">35%</span></label>
+                    <input class="range-control" type="range" id="soundVolumeRange" min="0" max="100" value="35">
+                </div>
+
+                <div class="setting-group">
+                    <label for="glassBlurRange">Frosted Glass Blur <span id="glassBlurValue">14px</span></label>
+                    <input class="range-control" type="range" id="glassBlurRange" min="0" max="28" value="14">
+                </div>
+
+                <div class="setting-group">
+                    <label>
+                        <span>Reduce Motion Accessibility</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="reduceMotionToggle">
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </label>
                 </div>
             </div>
-        </div>
+        </aside>
 
-        <!-- Hero Section -->
+        <!-- Hero Stage: Live Clock, 3D Weather Orb & Primary Readout -->
         <section class="hero-section">
             <div class="hero-content">
-                <div class="greeting" id="greeting">Good Morning</div>
-                <div class="hero-clock">
-                    <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
+                <div class="greeting-row">
+                    <span class="greeting-dot"></span>
+                    <span class="greeting" id="greeting">Good Day</span>
                 </div>
-                <div class="hero-date" id="heroDate">Loading date...</div>
-                <div class="hero-weather">
-                    <div class="weather-icon-large" id="weatherIconLarge"></div>
+
+                <div class="hero-clock-wrapper" data-parallax="0.2">
+                    <div class="hero-clock" id="heroClock">
+                        <span id="hours">00</span><span class="clock-colon">:</span><span id="minutes">00</span><span class="clock-colon">:</span><span id="seconds">00</span>
+                        <span class="clock-period" id="timePeriod"></span>
+                    </div>
+                </div>
+
+                <div class="hero-date" id="heroDate">Synchronizing local celestial time...</div>
+
+                <!-- 3D Interactive Celestial Weather Orb -->
+                <div class="weather-orb-container" id="weatherOrbContainer" aria-label="3D Weather Orb: Drag or move mouse to inspect in 3D">
+                    <!-- Weather Orb rendered dynamically via WeatherOrb class -->
+                </div>
+
+                <!-- Core Temperature Readout -->
+                <div class="hero-weather-row" data-parallax="0.15">
+                    <div class="hero-weather-icon" id="weatherIconLarge"></div>
                     <div class="temperature-large">
                         <span id="temperatureLarge">--</span>
                         <span class="temp-unit">°C</span>
                     </div>
-                    <div class="weather-description" id="weatherDescription">Loading weather...</div>
-                    <div class="feels-like">Feels like <span id="feelsLike">--</span>°</div>
                 </div>
-                <div class="weather-message" id="weatherMessage">Perfect weather for a walk today.</div>
-            </div>
-        </section>
 
-        <!-- Weather Details Grid -->
-        <section class="weather-details">
-            <div class="detail-card humidity-card">
-                <div class="detail-icon">💧</div>
-                <div class="detail-info">
-                    <div class="detail-label">Humidity</div>
-                    <div class="detail-value" id="humidity">--%</div>
+                <div class="weather-description" id="weatherDescription">Loading conditions...</div>
+                
+                <div class="feels-like-row">
+                    <span>Feels like <strong id="feelsLike">--</strong>°</span>
+                    <span>·</span>
+                    <span class="high-low-badge">H: <span id="tempHigh">--</span>° · L: <span id="tempLow">--</span>°</span>
                 </div>
-                <div class="detail-progress">
-                    <div class="progress-fill" id="humidityProgress"></div>
-                </div>
-            </div>
 
-            <div class="detail-card wind-card">
-                <div class="detail-icon">💨</div>
-                <div class="detail-info">
-                    <div class="detail-label">Wind</div>
-                    <div class="detail-value" id="windSpeed">-- km/h</div>
-                    <div class="wind-direction" id="windDirection">--</div>
-                </div>
-                <div class="wind-compass" id="windCompass">
-                    <div class="compass-needle" id="compassNeedle"></div>
-                </div>
-            </div>
+                <div class="weather-message-badge" id="weatherMessage">Calibrating atmospheric readings...</div>
 
-            <div class="detail-card uv-card">
-                <div class="detail-icon">☀️</div>
-                <div class="detail-info">
-                    <div class="detail-label">UV Index</div>
-                    <div class="detail-value" id="uvIndex">--</div>
-                </div>
-                <div class="uv-meter">
-                    <div class="uv-fill" id="uvFill"></div>
-                </div>
-            </div>
-
-            <div class="detail-card aqi-card">
-                <div class="detail-icon">🌬</div>
-                <div class="detail-info">
-                    <div class="detail-label">AQI</div>
-                    <div class="detail-value" id="aqi">--</div>
-                </div>
-                <div class="aqi-ring">
-                    <svg viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="8"/>
-                        <circle cx="50" cy="50" r="45" fill="none" stroke="var(--accent-primary)" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="283" id="aqiRing"/>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="detail-card visibility-card">
-                <div class="detail-icon">👁️</div>
-                <div class="detail-info">
-                    <div class="detail-label">Visibility</div>
-                    <div class="detail-value" id="visibility">-- km</div>
-                </div>
-            </div>
-
-            <div class="detail-card pressure-card">
-                <div class="detail-icon">📊</div>
-                <div class="detail-info">
-                    <div class="detail-label">Pressure</div>
-                    <div class="detail-value" id="pressure">-- hPa</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Sunrise/Sunset Section -->
-        <section class="sun-section">
-            <h3 class="section-title">Sunrise & Sunset</h3>
-            <div class="sun-progress">
-                <div class="sun-track">
-                    <div class="sun-indicator" id="sunIndicator"></div>
-                </div>
-                <div class="sun-times">
-                    <div class="sunrise">
-                        <span>🌅</span>
-                        <span id="sunriseTime">--:--</span>
+                <!-- Quick Environmental Vitals Strip -->
+                <div class="hero-vitals-strip">
+                    <div class="vital-chip" title="Humidity">
+                        <svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                        <span id="heroHumidity">--%</span>
                     </div>
-                    <div class="sunset">
-                        <span>🌇</span>
-                        <span id="sunsetTime">--:--</span>
+                    <div class="vital-chip" title="Wind Speed">
+                        <svg viewBox="0 0 24 24"><path d="M14.5 17c0 1.65-1.35 3-3 3s-3-1.35-3-3h2c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1H2v-2h9.5c1.65 0 3 1.35 3 3zm4.5-8c0-1.65-1.35-3-3-3s-3 1.35-3 3h2c0-.55.45-1 1-1s1 .45 1 1-.45 1-1 1H2v2h14c1.65 0 3-1.35 3-3zm-2 4c0-.55-.45-1-1-1s-1 .45-1 1h-2c0-1.65 1.35-3 3-3s3 1.35 3 3-1.35 3-3 3H2v-2h12c.55 0 1-.45 1-1z"/></svg>
+                        <span id="heroWind">-- km/h</span>
+                    </div>
+                    <div class="vital-chip" title="UV Index">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                        <span id="heroUv">UV --</span>
+                    </div>
+                    <div class="vital-chip" title="Air Quality">
+                        <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+                        <span id="heroAqi">AQI --</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Moon Phase Section -->
-        <section class="moon-section">
-            <h3 class="section-title">Moon Phase</h3>
-            <div class="moon-display">
-                <div class="moon-icon" id="moonIcon">🌑</div>
-                <div class="moon-info">
-                    <div class="moon-phase" id="moonPhase">Waxing Gibbous</div>
-                    <div class="moon-illumination">Illumination: <span id="moonIllumination">--%</span></div>
+        <!-- Detailed Atmospheric Vitals Grid -->
+        <section class="section-wrapper weather-details">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>
+                    Atmospheric Vitals
+                </h3>
+            </div>
+            
+            <div class="weather-details-grid">
+                <!-- Humidity Card -->
+                <div class="detail-card">
+                    <div class="card-top">
+                        <span class="card-label">Humidity</span>
+                        <div class="card-icon-bubble">
+                            <svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                        </div>
+                    </div>
+                    <div class="card-value" id="humidity">--%</div>
+                    <div class="card-progress-bar">
+                        <div class="progress-fill" id="humidityProgress"></div>
+                    </div>
+                    <div class="card-subtext" id="dewPoint">Dew point: --°</div>
+                </div>
+
+                <!-- Wind Compass Card -->
+                <div class="detail-card">
+                    <div class="card-top">
+                        <span class="card-label">Wind & Direction</span>
+                        <div class="card-icon-bubble">
+                            <svg viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                        </div>
+                    </div>
+                    <div class="card-value" id="windSpeed">-- km/h</div>
+                    <div class="wind-compass-wrapper">
+                        <span class="compass-cardinal cardinal-n">N</span>
+                        <span class="compass-cardinal cardinal-e">E</span>
+                        <span class="compass-cardinal cardinal-s">S</span>
+                        <span class="compass-cardinal cardinal-w">W</span>
+                        <div class="compass-needle-pivot" id="compassNeedle">
+                            <div class="compass-needle-north"></div>
+                            <div class="compass-needle-south"></div>
+                        </div>
+                        <div class="compass-center-pin"></div>
+                    </div>
+                    <div class="card-subtext" id="windDirection">Direction: --</div>
+                </div>
+
+                <!-- UV Index Card -->
+                <div class="detail-card">
+                    <div class="card-top">
+                        <span class="card-label">UV Index</span>
+                        <div class="card-icon-bubble">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                        </div>
+                    </div>
+                    <div class="card-value" id="uvIndex">--</div>
+                    <div class="uv-meter-wrapper">
+                        <div class="uv-segmented-bar">
+                            <div class="uv-segmented-fill" id="uvFill"></div>
+                        </div>
+                        <span class="uv-badge-tag" id="uvCategory">Moderate</span>
+                    </div>
+                    <div class="card-subtext" id="uvAdvice">Sun protection recommended</div>
+                </div>
+
+                <!-- AQI Card -->
+                <div class="detail-card">
+                    <div class="card-top">
+                        <span class="card-label">Air Quality (AQI)</span>
+                        <div class="card-icon-bubble">
+                            <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+                        </div>
+                    </div>
+                    <div class="aqi-gauge-wrapper">
+                        <svg class="aqi-gauge-svg" viewBox="0 0 100 100">
+                            <circle class="aqi-circle-bg" cx="50" cy="50" r="45"/>
+                            <circle class="aqi-circle-fill" id="aqiRing" cx="50" cy="50" r="45"/>
+                        </svg>
+                        <div class="aqi-gauge-val" id="aqi">--</div>
+                    </div>
+                    <div class="card-subtext" id="aqiCategory" style="text-align: center; font-weight: 600;">Good Quality</div>
+                </div>
+
+                <!-- Visibility Card -->
+                <div class="detail-card">
+                    <div class="card-top">
+                        <span class="card-label">Visibility</span>
+                        <div class="card-icon-bubble">
+                            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                        </div>
+                    </div>
+                    <div class="card-value" id="visibility">-- km</div>
+                    <div class="card-progress-bar">
+                        <div class="progress-fill" id="visibilityFill" style="width: 85%;"></div>
+                    </div>
+                    <div class="card-subtext" id="visibilityClarity">Clear optical horizon</div>
+                </div>
+
+                <!-- Barometric Pressure Card -->
+                <div class="detail-card">
+                    <div class="card-top">
+                        <span class="card-label">Pressure</span>
+                        <div class="card-icon-bubble">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                        </div>
+                    </div>
+                    <div class="card-value" id="pressure">-- hPa</div>
+                    <div class="card-progress-bar">
+                        <div class="progress-fill" id="pressureFill" style="width: 65%;"></div>
+                    </div>
+                    <div class="card-subtext" id="pressureTendency">Steady · Stable barometer</div>
                 </div>
             </div>
         </section>
 
-        <!-- Hourly Forecast -->
-        <section class="hourly-forecast">
-            <h3 class="section-title">Hourly Forecast</h3>
-            <div class="hourly-scroll" id="hourlyScroll">
-                <!-- Hourly cards will be inserted here -->
+        <!-- Celestial Ephemeris: Parabolic Sun Track & Moon Phase -->
+        <section class="section-wrapper celestial-section">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <svg viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1z"/></svg>
+                    Celestial Ephemeris
+                </h3>
+            </div>
+
+            <div class="celestial-grid">
+                <!-- Parabolic Sun Path Card -->
+                <div class="sun-path-card">
+                    <div class="card-top">
+                        <span class="card-label">Solar Trajectory</span>
+                        <span class="sun-countdown-badge" id="sunCountdown">Sunset in --</span>
+                    </div>
+
+                    <div class="sun-svg-wrapper">
+                        <svg class="sun-arc-svg" viewBox="0 0 500 140">
+                            <defs>
+                                <linearGradient id="sunPathGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#ffd166"/>
+                                    <stop offset="50%" stop-color="#fb8500"/>
+                                    <stop offset="100%" stop-color="#f72585"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- Parabolic Bezier Path -->
+                            <path class="sun-arc-track" d="M 30 120 Q 250 15 470 120"/>
+                            <path class="sun-arc-active" id="sunPathActive" stroke="url(#sunPathGrad)" fill="none" d="M 30 120 Q 250 15 470 120"/>
+                            <line class="sun-horizon-line" x1="10" y1="120" x2="490" y2="120"/>
+
+                            <!-- Traveling Sun Marker -->
+                            <g class="sun-marker-group" id="sunIndicator" transform="translate(30, 120)">
+                                <circle class="sun-marker-glow" cx="0" cy="0" r="11"/>
+                                <circle cx="0" cy="0" r="6" fill="#ffffff"/>
+                            </g>
+                        </svg>
+                    </div>
+
+                    <div class="sun-meta-row">
+                        <div class="sun-time-block">
+                            <span class="sun-time-icon">🌅</span>
+                            <div>
+                                <div class="sun-time-label">Sunrise</div>
+                                <div class="sun-time-val" id="sunriseTime">--:--</div>
+                            </div>
+                        </div>
+
+                        <div class="sun-time-block">
+                            <span class="sun-time-icon">🌇</span>
+                            <div>
+                                <div class="sun-time-label">Sunset</div>
+                                <div class="sun-time-val" id="sunsetTime">--:--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Realistic Moon Phase Card -->
+                <div class="moon-phase-card">
+                    <div class="moon-visual" id="moonGraphic">
+                        <div class="moon-craters"></div>
+                        <div class="moon-shadow-mask" id="moonShadowMask"></div>
+                    </div>
+
+                    <div class="moon-info">
+                        <div class="moon-header-title">Lunar Cycle</div>
+                        <div class="moon-phase-name" id="moonPhase">Waxing Gibbous</div>
+                        
+                        <div class="moon-illum-row">
+                            <div class="moon-illum-bar">
+                                <div class="moon-illum-fill" id="moonIllumFill" style="width: 78%;"></div>
+                            </div>
+                            <span class="moon-illum-val" id="moonIllumination">78%</span>
+                        </div>
+
+                        <div class="card-subtext" id="nextFullMoon" style="margin-top: 0.6rem;">Next Full Moon in ~4 days</div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Daily Forecast -->
-        <section class="daily-forecast">
-            <h3 class="section-title">7-Day Forecast</h3>
-            <div class="forecast-grid" id="forecastGrid">
-                <!-- Daily cards will be inserted here -->
+        <!-- 24-Hour Forecast Timeline with Temperature Sparkline -->
+        <section class="section-wrapper hourly-forecast">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    24-Hour Trajectory
+                </h3>
+            </div>
+
+            <!-- Temperature Trend Sparkline -->
+            <div class="hourly-sparkline-container" id="hourlySparklineWrapper">
+                <svg class="hourly-sparkline-svg" id="hourlySparklineSvg" viewBox="0 0 1000 80" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="sparklineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.5"/>
+                            <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.0"/>
+                        </linearGradient>
+                    </defs>
+                    <path class="sparkline-fill" id="sparklineArea" d=""/>
+                    <path class="sparkline-line" id="sparklinePath" d=""/>
+                    <g id="sparklinePoints"></g>
+                </svg>
+            </div>
+
+            <!-- Interactive Scrollable Hour Cards -->
+            <div class="hourly-scroll-container" id="hourlyScroll">
+                <!-- Dynamically populated via app.js -->
             </div>
         </section>
 
-        <!-- World Clock -->
-        <section class="world-clock-section">
-            <h3 class="section-title">World Clock</h3>
-            <div class="world-clock-controls">
-                <input type="text" id="worldClockSearch" placeholder="Add city timezone..." autocomplete="off" aria-label="Add world clock">
+        <!-- 7-Day Extended Forecast with Temperature Spectrum Bars -->
+        <section class="section-wrapper daily-forecast">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>
+                    7-Day Spectrum Outlook
+                </h3>
+            </div>
+
+            <div class="daily-forecast-grid" id="forecastGrid">
+                <!-- Dynamically populated via app.js -->
+            </div>
+        </section>
+
+        <!-- World Clock Hub -->
+        <section class="section-wrapper world-clock-section">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    World Clock Hub
+                </h3>
+            </div>
+
+            <div class="world-clock-controls-bar">
+                <input type="text" id="worldClockSearch" placeholder="Add city or timezone (e.g. Tokyo, London, Dubai)..." autocomplete="off" aria-label="Add city to world clock">
                 <div class="timezone-results" id="worldClockResults"></div>
+                
+                <div class="quick-cities-strip">
+                    <button class="quick-city-chip" type="button" data-city="London" data-tz="Europe/London">+ London</button>
+                    <button class="quick-city-chip" type="button" data-city="New York" data-tz="America/New_York">+ New York</button>
+                    <button class="quick-city-chip" type="button" data-city="Tokyo" data-tz="Asia/Tokyo">+ Tokyo</button>
+                    <button class="quick-city-chip" type="button" data-city="Paris" data-tz="Europe/Paris">+ Paris</button>
+                    <button class="quick-city-chip" type="button" data-city="Dubai" data-tz="Asia/Dubai">+ Dubai</button>
+                    <button class="quick-city-chip" type="button" data-city="Sydney" data-tz="Australia/Sydney">+ Sydney</button>
+                </div>
             </div>
+
             <div class="world-clock-grid" id="worldClockGrid">
-                <!-- World clocks will be inserted here -->
+                <!-- Dynamically populated via app.js -->
             </div>
         </section>
 
-        <!-- Toast Container -->
+        <!-- Toast Notifications -->
         <div class="toast-container" id="toastContainer"></div>
     </div>
 
+    <!-- Scripts Loaded in Strict Dependency Order -->
+    <script src="js/weather-orb.js"></script>
+    <script src="js/micro-animations.js"></script>
+    <script src="js/scroll-controller.js"></script>
+    <script src="js/audio-engine.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
