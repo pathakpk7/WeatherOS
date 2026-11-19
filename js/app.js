@@ -154,6 +154,8 @@ function cacheDom() {
         // Dual-Mode Chrono Watch (Digital & Analog)
         'btnClockDigital', 'btnClockAnalog', 'heroChronoContainer', 'chronoDigitalFace', 'chronoAnalogFace',
         'analogHourHand', 'analogMinuteHand', 'analogSecondHand', 'analogDateWindow',
+        'headerChronoWrapper', 'headerChronoModeToggle', 'headerChronoModeBadge',
+        'headerChronoDropdownBtn', 'headerChronoStyleName', 'chronoDropdownPanel',
         // Main Website Cosmic Hub (Panchang & Horoscope)
         'headerPanchangBtn', 'headerHoroscopeBtn',
         'cosmicHubSection', 'cosmicHubTitle', 'cosmicDateDisplay', 'cosmicSamvatDisplay',
@@ -191,6 +193,7 @@ function cacheDom() {
     dom.themeButtons = Array.from(document.querySelectorAll('.theme-btn'));
     dom.unitButtons = Array.from(document.querySelectorAll('.unit-btn'));
     dom.chronoStyleChips = Array.from(document.querySelectorAll('.chrono-style-chip'));
+    dom.chronoStyleOptions = Array.from(document.querySelectorAll('.chrono-style-option'));
 }
 
 // ===== LOCAL PERSISTENCE HELPERS =====
@@ -1083,6 +1086,18 @@ function stopAnalogSweep() {
     }
 }
 
+const CHRONO_STYLES = ['cyber', 'swiss', 'bauhaus', 'amber', 'tokyo', 'cosmic', 'matrix', 'aviator'];
+const CHRONO_STYLE_LABELS = {
+    cyber: 'Cyber Neo',
+    swiss: 'Swiss Luxury',
+    bauhaus: 'Bauhaus',
+    amber: 'Amber CRT',
+    tokyo: 'Tokyo Arcade',
+    cosmic: 'Cosmic Astrolabe',
+    matrix: 'Matrix Cascade',
+    aviator: 'Aviator Flieger'
+};
+
 function setClockMode(mode) {
     if (!['digital', 'analog'].includes(mode)) mode = 'digital';
     state.settings.clockMode = mode;
@@ -1091,6 +1106,10 @@ function setClockMode(mode) {
     if (dom.heroChronoContainer) {
         dom.heroChronoContainer.classList.remove('mode-digital', 'mode-analog');
         dom.heroChronoContainer.classList.add(`mode-${mode}`);
+    }
+
+    if (dom.headerChronoModeBadge) {
+        dom.headerChronoModeBadge.textContent = mode.toUpperCase();
     }
 
     dom.btnClockDigital?.classList.toggle('active', mode === 'digital');
@@ -1104,13 +1123,23 @@ function setClockMode(mode) {
 }
 
 function setClockStyle(style) {
-    if (!['cyber', 'swiss', 'bauhaus', 'amber'].includes(style)) style = 'cyber';
+    if (!CHRONO_STYLES.includes(style)) style = 'cyber';
     state.settings.clockStyle = style;
     saveJson(STORAGE_KEYS.settings, state.settings);
 
     if (dom.heroChronoContainer) {
-        dom.heroChronoContainer.classList.remove('style-cyber', 'style-swiss', 'style-bauhaus', 'style-amber');
+        CHRONO_STYLES.forEach(s => dom.heroChronoContainer.classList.remove(`style-${s}`));
         dom.heroChronoContainer.classList.add(`style-${style}`);
+    }
+
+    if (dom.headerChronoStyleName) {
+        dom.headerChronoStyleName.textContent = CHRONO_STYLE_LABELS[style] || 'Cyber';
+    }
+
+    if (dom.chronoStyleOptions) {
+        dom.chronoStyleOptions.forEach(opt => {
+            opt.classList.toggle('active', opt.dataset.style === style);
+        });
     }
 
     if (dom.chronoStyleChips) {
@@ -1119,7 +1148,7 @@ function setClockStyle(style) {
         });
     }
 
-    // Dynamic dial indices based on watch design
+    // Dynamic dial indices tailored for each distinct watch face & typography
     const ring = document.getElementById('analogIndicesRing');
     if (ring) {
         if (style === 'swiss') {
@@ -1143,7 +1172,36 @@ function setClockStyle(style) {
                 <span class="dial-mark mark-6">|</span>
                 <span class="dial-mark mark-9">|</span>
             `;
+        } else if (style === 'tokyo') {
+            ring.innerHTML = `
+                <span class="dial-mark mark-12">十二</span>
+                <span class="dial-mark mark-3">三</span>
+                <span class="dial-mark mark-6">六</span>
+                <span class="dial-mark mark-9">九</span>
+            `;
+        } else if (style === 'cosmic') {
+            ring.innerHTML = `
+                <span class="dial-mark mark-12">★</span>
+                <span class="dial-mark mark-3">◆</span>
+                <span class="dial-mark mark-6">▲</span>
+                <span class="dial-mark mark-9">●</span>
+            `;
+        } else if (style === 'matrix') {
+            ring.innerHTML = `
+                <span class="dial-mark mark-12">00</span>
+                <span class="dial-mark mark-3">15</span>
+                <span class="dial-mark mark-6">30</span>
+                <span class="dial-mark mark-9">45</span>
+            `;
+        } else if (style === 'aviator') {
+            ring.innerHTML = `
+                <span class="dial-mark mark-12">▲</span>
+                <span class="dial-mark mark-3">3</span>
+                <span class="dial-mark mark-6">6</span>
+                <span class="dial-mark mark-9">9</span>
+            `;
         } else {
+            // Default cyber
             ring.innerHTML = `
                 <span class="dial-mark mark-12">12</span>
                 <span class="dial-mark mark-3">3</span>
@@ -1159,11 +1217,42 @@ function initClock() {
     clearInterval(state.clockTimer);
     state.clockTimer = setInterval(updateClock, 1000);
 
-    // Clock Mode Buttons (Digital / Analog)
+    // Header A/D Mode Toggle Button
+    dom.headerChronoModeToggle?.addEventListener('click', () => {
+        const nextMode = (state.settings.clockMode || 'digital') === 'digital' ? 'analog' : 'digital';
+        setClockMode(nextMode);
+    });
+
+    // Header Watch Subtype Dropdown Open/Close
+    dom.headerChronoDropdownBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = dom.chronoDropdownPanel?.classList.toggle('open');
+        dom.headerChronoWrapper?.classList.toggle('active-open', !!isOpen);
+    });
+
+    // Close Dropdown on outside click
+    document.addEventListener('click', (e) => {
+        if (!dom.headerChronoWrapper?.contains(e.target)) {
+            dom.chronoDropdownPanel?.classList.remove('open');
+            dom.headerChronoWrapper?.classList.remove('active-open');
+        }
+    });
+
+    // Watch Style Options in Dropdown
+    if (dom.chronoStyleOptions) {
+        dom.chronoStyleOptions.forEach(opt => {
+            opt.addEventListener('click', (e) => {
+                e.stopPropagation();
+                setClockStyle(opt.dataset.style);
+                dom.chronoDropdownPanel?.classList.remove('open');
+                dom.headerChronoWrapper?.classList.remove('active-open');
+            });
+        });
+    }
+
+    // Legacy support for direct buttons if present
     dom.btnClockDigital?.addEventListener('click', () => setClockMode('digital'));
     dom.btnClockAnalog?.addEventListener('click', () => setClockMode('analog'));
-
-    // Clock Style Chips
     if (dom.chronoStyleChips) {
         dom.chronoStyleChips.forEach(chip => {
             chip.addEventListener('click', () => setClockStyle(chip.dataset.style));

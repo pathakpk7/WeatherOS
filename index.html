@@ -10,7 +10,7 @@
     <!-- Design System Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Stylesheets in Strict Cascading Order -->
     <link rel="stylesheet" href="css/animations.css">
@@ -213,6 +213,82 @@
                 <button class="icon-btn settings-toggle" id="settingsToggle" type="button" aria-label="Open settings drawer" title="Settings & Preferences">
                     <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.65.07-.98s-.02-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.37-.31-.6-.22l-2.49 1a7.3 7.3 0 0 0-1.7-.98L14.5 2.42A.5.5 0 0 0 14 2h-4a.5.5 0 0 0-.5.42L9.13 5.07c-.61.24-1.18.56-1.7.98l-2.49-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .12.64l2.11 1.65a7.8 7.8 0 0 0 0 1.96l-2.11 1.65a.5.5 0 0 0-.12.64l2 3.46c.12.22.37.31.6.22l2.49-1c.52.4 1.09.73 1.7.98l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.61-.25 1.18-.58 1.7-.98l2.49 1c.23.09.48 0 .6-.22l2-3.46a.5.5 0 0 0-.12-.64l-2.11-1.65zM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5z"/></svg>
                 </button>
+
+                <!-- Header Chronometer Controller (A/D Mode Toggle + Subtype Dropdown) -->
+                <div class="header-chrono-pill-wrapper" id="headerChronoWrapper">
+                    <button class="header-chrono-mode-toggle" id="headerChronoModeToggle" type="button" aria-label="Toggle Analog / Digital clock" title="Switch Analog / Digital (A/D)">
+                        <span class="chrono-ad-glyph">A/D</span>
+                        <span class="chrono-mode-badge" id="headerChronoModeBadge">DIGITAL</span>
+                    </button>
+                    <button class="header-chrono-dropdown-btn" id="headerChronoDropdownBtn" type="button" aria-label="Watch style dropdown" title="Select Watch Face Subtype">
+                        <span class="chrono-style-name" id="headerChronoStyleName">Cyber</span>
+                        <svg class="chrono-dropdown-arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                    </button>
+
+                    <!-- Watch Style Subtypes Glass Dropdown Menu -->
+                    <div class="chrono-dropdown-panel" id="chronoDropdownPanel">
+                        <div class="chrono-dropdown-title">Clock Face & Font Styles</div>
+                        <div class="chrono-dropdown-items-grid">
+                            <button class="chrono-style-option active" data-style="cyber" type="button">
+                                <span class="style-opt-icon">⚡</span>
+                                <div class="style-opt-text">
+                                    <span class="style-opt-name">Cyber Neo</span>
+                                    <span class="style-opt-sub">Orbitron neon cyan/magenta</span>
+                                </div>
+                            </button>
+                            <button class="chrono-style-option" data-style="swiss" type="button">
+                                <span class="style-opt-icon">🏛️</span>
+                                <div class="style-opt-text">
+                                    <span class="style-opt-name">Swiss Luxury</span>
+                                    <span class="style-opt-sub">Cinzel Roman gold chronograph</span>
+                                </div>
+                            </button>
+                            <button class="chrono-style-option" data-style="bauhaus" type="button">
+                                <span class="style-opt-icon">📐</span>
+                                <div class="style-opt-text">
+                                    <span class="style-opt-name">Bauhaus Minimal</span>
+                                    <span class="style-opt-sub">Clean Scandinavian batons</span>
+                                </div>
+                            </button>
+                            <button class="chrono-style-option" data-style="amber" type="button">
+                                <span class="style-opt-icon">📟</span>
+                                <div class="style-opt-text">
+                                    <span class="style-opt-name">Amber Terminal</span>
+                                    <span class="style-opt-sub">Vintage CRT phosphor glow</span>
+                                </div>
+                            </button>
+                            <button class="chrono-style-option" data-style="tokyo" type="button">
+                                <span class="style-opt-icon">🌆</span>
+                                <div class="style-opt-text">
+                                    <span class="style-opt-name">Tokyo Arcade</span>
+                                    <span class="style-opt-sub">Kanji marks & synthwave neon</span>
+                                </div>
+                            </button>
+                            <button class="chrono-style-option" data-style="cosmic" type="button">
+                                <span class="style-opt-icon">🌌</span>
+                                <div class="style-opt-text">
+                                    <span class="style-opt-name">Cosmic Astrolabe</span>
+                                    <span class="style-opt-sub">Starlight rings & celestial gold</span>
+                                </div>
+                            </button>
+                            <button class="chrono-style-option" data-style="matrix" type="button">
+                                <span class="style-opt-icon">🟢</span>
+                                <div class="style-opt-text">
+                                    <span class="style-opt-name">Matrix Cascade</span>
+                                    <span class="style-opt-sub">Phosphor green hacker terminal</span>
+                                </div>
+                            </button>
+                            <button class="chrono-style-option" data-style="aviator" type="button">
+                                <span class="style-opt-icon">✈️</span>
+                                <div class="style-opt-text">
+                                    <span class="style-opt-name">Aviator Flieger</span>
+                                    <span class="style-opt-sub">Matte tactical pilot dial</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <button class="header-cosmic-pill" id="headerPanchangBtn" type="button" aria-label="Open Indian Vedic Panchang" title="Indian Vedic Panchang (पंचांग)">
                     <span class="cosmic-pill-icon">🕉️</span>
                     <span class="cosmic-pill-text">Panchang</span>
@@ -264,25 +340,7 @@
                 </div>
 
                 <div class="hero-clock-wrapper" data-parallax="0.2">
-                    <!-- Chrono Mode & Watch Style Switchers -->
-                    <div class="chrono-controls-bar">
-                        <div class="chrono-mode-switch" role="tablist" aria-label="Clock Display Mode">
-                            <button class="chrono-mode-btn active" id="btnClockDigital" type="button" data-mode="digital">
-                                <span>🔢</span> Digital
-                            </button>
-                            <button class="chrono-mode-btn" id="btnClockAnalog" type="button" data-mode="analog">
-                                <span>🕒</span> Analog
-                            </button>
-                        </div>
-                        <div class="chrono-style-selector" role="group" aria-label="Watch Typography & Style">
-                            <button class="chrono-style-chip active" data-style="cyber" type="button" title="Cyberpunk Neon">Cyber</button>
-                            <button class="chrono-style-chip" data-style="swiss" type="button" title="Swiss Luxury Chronometer">Swiss</button>
-                            <button class="chrono-style-chip" data-style="bauhaus" type="button" title="Minimalist Bauhaus">Minimal</button>
-                            <button class="chrono-style-chip" data-style="amber" type="button" title="Amber Retro Terminal">Amber</button>
-                        </div>
-                    </div>
-
-                    <!-- 3D Morphing Dual-Face Chrono Container -->
+                    <!-- 3D Morphing Dual-Face Chrono Container (Always Centered) -->
                     <div class="hero-chrono-container mode-digital style-cyber" id="heroChronoContainer">
                         <!-- Digital Face -->
                         <div class="chrono-face chrono-digital" id="chronoDigitalFace">
@@ -299,10 +357,10 @@
                                     <div class="analog-dial" id="analogDial">
                                         <!-- Hour Markers & Roman/Numeric Numerals -->
                                         <div class="analog-indices-ring" id="analogIndicesRing">
-                                            <span class="dial-mark mark-12">XII</span>
-                                            <span class="dial-mark mark-3">III</span>
-                                            <span class="dial-mark mark-6">VI</span>
-                                            <span class="dial-mark mark-9">IX</span>
+                                            <span class="dial-mark mark-12">12</span>
+                                            <span class="dial-mark mark-3">3</span>
+                                            <span class="dial-mark mark-6">6</span>
+                                            <span class="dial-mark mark-9">9</span>
                                         </div>
                                         <div class="analog-brand-mark">
                                             <span class="analog-brand-name">WEATHEROS</span>
