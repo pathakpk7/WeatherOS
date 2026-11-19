@@ -46,7 +46,12 @@
 - **Zero Audio Assets Required**: Uses the native Web Audio API to procedurally synthesize gentle rain, wind sweeps, distant soft thunder rumbles, and calm sunny pads.
 - **Header Soundwave Equalizer**: Instant 1-click toggle with animated equalizer visualizer bars.
 
-### 7. World Clock Hub & Global Search
+### 7. Vedic Panchang (पंचांग) & Dual-Language Horoscope (राशिफल)
+- **Top Sidebar Cosmic Drawer**: Integrated cleanly at the top of the sidebar section with quick-access navigation pills (`[🕉️ Panchang]`, `[🔮 Horoscope]`, `[⚙️ Settings]`).
+- **Real-Time Vedic Almanac**: Computes exact Tithi (and Paksha), Vaar with planetary lord & presiding deity, Nakshatra with Pada, Yoga, Karana, Samvat (Vikram Samvat 2083, Shaka 1948, Masa, Ritu, Ayana), dynamic Muhurats (Rahu Kaal, Abhijit Muhurat, Brahma Muhurat, Yamaganda, Amrit Kaal, Godhuli), and Sun/Moon signs.
+- **Bilingual Dual-Language Horoscope**: Comprehensive Daily, Weekly, Monthly, and Yearly readings for all 12 zodiac signs (Aries through Pisces / मेष through मीन) in English & Hindi across 4 life domains (Cosmic Overview, Career & Wealth, Love & Relationships, Health & Vitality) with Lucky Traits, Harmony Scores, Compatibility, and Gemstones.
+
+### 8. World Clock Hub & Global Search
 - Real-time global clocks with local times, day/night ambient badges, and user-relative time offsets.
 - Instant location search with geocoding autocomplete and keyboard navigation (`/` or `Ctrl+K` / `Cmd+K` shortcut).
 
@@ -97,6 +102,8 @@ WeatherOS/
 │   ├── themes.css         # Contextual weather & time-of-day palettes
 │   └── responsive.css     # Fluid breakpoints for mobile, tablet & desktop
 ├── js/
+│   ├── panchang.js        # Indian Vedic Panchang astronomical calculation engine
+│   ├── horoscope.js       # Dual-language (EN/HI) 12-sign daily/weekly/monthly/yearly horoscope engine
 │   ├── weather-orb.js     # 3D Weather Orb with gyro mouse physics
 │   ├── micro-animations.js# Eased numeric counters & card spotlight sheen
 │   ├── scroll-controller.js# Viewport triggers & subtle mouse parallax

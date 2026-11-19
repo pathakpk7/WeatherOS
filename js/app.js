@@ -5,7 +5,8 @@
 const STORAGE_KEYS = {
     settings: 'weatherOS_settings_v3',
     recentSearches: 'weatherOS_recentSearches_v3',
-    worldClocks: 'weatherOS_worldClocks_v3'
+    worldClocks: 'weatherOS_worldClocks_v3',
+    cosmic: 'weatherOS_cosmic_v1'
 };
 
 const DEFAULT_LOCATION = {
@@ -99,6 +100,13 @@ const state = {
     settings: loadJson(STORAGE_KEYS.settings, DEFAULT_SETTINGS),
     recentSearches: loadJson(STORAGE_KEYS.recentSearches, []),
     worldClocks: loadJson(STORAGE_KEYS.worldClocks, DEFAULT_CLOCKS),
+    cosmic: loadJson(STORAGE_KEYS.cosmic, {
+        panchangLang: 'en',
+        horoscopeLang: 'en',
+        horoscopeSign: 'aries',
+        horoscopeTimeframe: 'daily',
+        activeTab: 'panchang'
+    }),
     location: null,
     weather: null,
     airQuality: null,
@@ -140,7 +148,35 @@ function cacheDom() {
         'moonPhaseCard', 'moonZodiac', 'moonIlluminationBadge', 'moonAgeText', 'moonDistance', 'moonTerminator',
         'lunarPhasesStrip', 'moonriseTime', 'moonsetTime', 'moonSkyWindow',
         'hourlySparklineWrapper', 'hourlySparklineSvg', 'sparklineArea', 'sparklinePath', 'sparklinePoints', 'hourlyScroll',
-        'forecastGrid', 'worldClockSearch', 'worldClockResults', 'worldClockGrid', 'toastContainer'
+        'forecastGrid', 'worldClockSearch', 'worldClockResults', 'worldClockGrid', 'toastContainer',
+        // Cosmic Drawer, Vedic Panchang & Dual-Language Horoscope
+        'headerPanchangBtn', 'headerHoroscopeBtn', 'sidebarDrawerTitle', 'sidebarDrawerSubtitle',
+        'tabBtnPanchang', 'tabBtnHoroscope', 'tabBtnPreferences',
+        'panePanchang', 'paneHoroscope', 'panePreferences',
+        'panchangDateDisplay', 'panchangSamvatDisplay', 'panchangLangSwitch',
+        'panchangPakshaTag', 'panchangTithiName', 'panchangTithiEnds',
+        'panchangVaar', 'panchangVaarDeity', 'labelVaar',
+        'panchangNakshatra', 'panchangNakshatraPada', 'labelNakshatra',
+        'panchangYoga', 'panchangYogaQuality', 'labelYoga',
+        'panchangKarana', 'panchangKaranaSub', 'labelKarana',
+        'labelMuhuratHeader', 'labelRahuKaal', 'adviceRahuKaal', 'panchangRahuTime',
+        'labelAbhijit', 'adviceAbhijit', 'panchangAbhijitTime',
+        'labelBrahma', 'adviceBrahma', 'panchangBrahmaTime',
+        'labelYamaganda', 'adviceYamaganda', 'panchangYamaTime',
+        'labelAmrit', 'adviceAmrit', 'panchangAmritTime',
+        'labelGodhuli', 'adviceGodhuli', 'panchangGodhuliTime',
+        'labelSamvatDetails', 'labelVikramSamvat', 'panchangVikramVal',
+        'labelShakaSamvat', 'panchangShakaVal', 'labelHinduMonth', 'panchangMonthVal',
+        'labelRitu', 'panchangRituVal', 'labelSunSign', 'panchangSunSign', 'labelMoonSign', 'panchangMoonSign',
+        'horoscopeHeading', 'horoscopeSubheading', 'horoscopeLangSwitch',
+        'tfBtnDaily', 'tfBtnWeekly', 'tfBtnMonthly', 'tfBtnYearly',
+        'zodiacSignsContainer', 'horoscopeReadingDisplay',
+        'hrSignGlyph', 'hrSignName', 'hrSignDates', 'hrHarmonyPill', 'hrHarmonyScore',
+        'labelLuckyNum', 'hrLuckyNum', 'labelLuckyColor', 'hrLuckyColor',
+        'labelRulingPlanet', 'hrPlanet', 'labelElement', 'hrElement',
+        'labelGeneralPred', 'hrOverviewText', 'labelCareerPred', 'hrCareerText',
+        'labelLovePred', 'hrLoveText', 'labelHealthPred', 'hrHealthText',
+        'labelCompat', 'hrCompatibleSigns', 'labelGemstone', 'hrGemstone'
     ];
 
     ids.forEach(id => {
@@ -310,6 +346,8 @@ async function loadWeather(location, saveToRecent = false) {
         renderWeather();
         renderForecasts();
         renderWorldClock();
+        renderPanchang();
+        renderHoroscope();
 
         showToast(`Atmosphere synchronized for ${location.name}`, 'success');
     } catch (error) {
@@ -1227,7 +1265,9 @@ function addRecentSearch(location) {
 
 // ===== SETTINGS & CONTROLS =====
 function initSettings() {
-    dom.settingsToggle?.addEventListener('click', openSettingsDrawer);
+    dom.settingsToggle?.addEventListener('click', () => openSettingsDrawer('preferences'));
+    dom.headerPanchangBtn?.addEventListener('click', () => openSettingsDrawer('panchang'));
+    dom.headerHoroscopeBtn?.addEventListener('click', () => openSettingsDrawer('horoscope'));
     dom.closeSettings?.addEventListener('click', closeSettingsDrawer);
     dom.drawerBackdrop?.addEventListener('click', () => {
         closeSearchDrawer();
@@ -1363,10 +1403,13 @@ function initSettings() {
     syncSettingsUi();
 }
 
-function openSettingsDrawer() {
+function openSettingsDrawer(tabName) {
     closeSearchDrawer();
     dom.settingsPanel?.classList.add('open');
     dom.drawerBackdrop?.classList.add('active');
+    if (tabName && typeof switchCosmicTab === 'function') {
+        switchCosmicTab(tabName);
+    }
 }
 
 function closeSettingsDrawer() {
@@ -1697,6 +1740,260 @@ async function detectUserLocation(interactive = false) {
     }
 }
 
+// ==========================================================================
+// VEDIC PANCHANG & DUAL-LANGUAGE HOROSCOPE CONTROLLER
+// ==========================================================================
+
+function switchCosmicTab(tab) {
+    if (!['panchang', 'horoscope', 'preferences'].includes(tab)) tab = 'panchang';
+    state.cosmic.activeTab = tab;
+    saveJson(STORAGE_KEYS.cosmic, state.cosmic);
+
+    const tabs = [
+        { name: 'panchang', btn: dom.tabBtnPanchang, pane: dom.panePanchang },
+        { name: 'horoscope', btn: dom.tabBtnHoroscope, pane: dom.paneHoroscope },
+        { name: 'preferences', btn: dom.tabBtnPreferences, pane: dom.panePreferences }
+    ];
+
+    tabs.forEach(t => {
+        const isActive = t.name === tab;
+        t.btn?.classList.toggle('active', isActive);
+        t.btn?.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        t.pane?.classList.toggle('active', isActive);
+    });
+
+    const isHi = (state.cosmic[tab === 'horoscope' ? 'horoscopeLang' : 'panchangLang'] || 'en') === 'hi';
+    if (tab === 'panchang') {
+        if (dom.sidebarDrawerTitle) dom.sidebarDrawerTitle.textContent = isHi ? 'दैनिक पंचांग' : 'Vedic Panchang';
+        if (dom.sidebarDrawerSubtitle) dom.sidebarDrawerSubtitle.textContent = isHi ? 'वैदिक काल गणना एवं शुभ-अशुभ मुहूर्त' : 'Vedic Almanac & Daily Rashifal';
+        renderPanchang();
+    } else if (tab === 'horoscope') {
+        if (dom.sidebarDrawerTitle) dom.sidebarDrawerTitle.textContent = isHi ? 'दैनिक एवं वार्षिक राशिफल' : 'Cosmic Horoscope';
+        if (dom.sidebarDrawerSubtitle) dom.sidebarDrawerSubtitle.textContent = isHi ? 'ग्रह गोचर एवं राशि फल' : 'Personalized Planetary Readings';
+        renderHoroscope();
+    } else {
+        if (dom.sidebarDrawerTitle) dom.sidebarDrawerTitle.textContent = 'System Preferences';
+        if (dom.sidebarDrawerSubtitle) dom.sidebarDrawerSubtitle.textContent = 'Display, Units & Physics Engine';
+    }
+}
+
+function renderPanchang() {
+    if (!window.VedicPanchang) return;
+    const lang = state.cosmic.panchangLang || 'en';
+    const isHi = lang === 'hi';
+
+    // Fetch sunrise and sunset from weather data if available
+    const sunrise = state.weather?.daily?.sunrise?.[0] || null;
+    const sunset = state.weather?.daily?.sunset?.[0] || null;
+    const panchang = window.VedicPanchang.calculatePanchang(new Date(), sunrise, sunset, state.settings.timeFormat24);
+
+    // Synchronize Language Switcher UI
+    if (dom.panchangLangSwitch) {
+        dom.panchangLangSwitch.querySelectorAll('.lang-pill-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.lang === lang);
+        });
+    }
+
+    // Dynamic Section Headings & Static Labels
+    if (dom.labelVaar) dom.labelVaar.textContent = isHi ? 'वार (दिन)' : 'Solar Day (Vaar)';
+    if (dom.labelNakshatra) dom.labelNakshatra.textContent = isHi ? 'नक्षत्र' : 'Nakshatra';
+    if (dom.labelYoga) dom.labelYoga.textContent = isHi ? 'योग' : 'Yoga';
+    if (dom.labelKarana) dom.labelKarana.textContent = isHi ? 'करण' : 'Karana';
+    if (dom.labelMuhuratHeader) dom.labelMuhuratHeader.textContent = isHi ? 'शुभ एवं अशुभ मुहूर्त' : 'Auspicious & Inauspicious Timings';
+    if (dom.labelRahuKaal) dom.labelRahuKaal.textContent = isHi ? 'राहु काल (अशुभ)' : 'Rahu Kaal (राहु काल)';
+    if (dom.adviceRahuKaal) dom.adviceRahuKaal.textContent = isHi ? 'शुभ कार्य आरंभ न करें' : 'Avoid starting auspicious deeds';
+    if (dom.labelAbhijit) dom.labelAbhijit.textContent = isHi ? 'अभिजीत मुहूर्त (अति शुभ)' : 'Abhijit Muhurat (अभिजीत)';
+    if (dom.adviceAbhijit) dom.adviceAbhijit.textContent = isHi ? 'सर्व कार्य सिद्धि का सर्वश्रेष्ठ समय' : 'Supreme victory window for all actions';
+    if (dom.labelBrahma) dom.labelBrahma.textContent = isHi ? 'ब्रह्म मुहूर्त' : 'Brahma Muhurat (ब्रह्म मुहूर्त)';
+    if (dom.adviceBrahma) dom.adviceBrahma.textContent = isHi ? 'ध्यान व योग साधना हेतु सर्वोत्तम' : 'Optimal for meditation & sadhana';
+    if (dom.labelYamaganda) dom.labelYamaganda.textContent = isHi ? 'यमगण्ड काल' : 'Yamaganda (यमगण्ड)';
+    if (dom.adviceYamaganda) dom.adviceYamaganda.textContent = isHi ? 'यात्रा व वित्तीय कार्य टालें' : 'Inauspicious journey period';
+    if (dom.labelAmrit) dom.labelAmrit.textContent = isHi ? 'अमृत काल' : 'Amrit Kaal (अमृत काल)';
+    if (dom.adviceAmrit) dom.adviceAmrit.textContent = isHi ? 'अमृत तुल्य शुभ फलदायी समय' : 'Nectar time for success & ceremonies';
+    if (dom.labelGodhuli) dom.labelGodhuli.textContent = isHi ? 'गोधूलि मुहूर्त' : 'Godhuli (गोधूलि मुहूर्त)';
+    if (dom.adviceGodhuli) dom.adviceGodhuli.textContent = isHi ? 'संध्याकालीन शुभ काल' : 'Evening twilight auspiciousness';
+    if (dom.labelSamvatDetails) dom.labelSamvatDetails.textContent = isHi ? 'संवत एवं ग्रह गोचर स्थिति' : 'Samvat & Astronomical Transit';
+    if (dom.labelVikramSamvat) dom.labelVikramSamvat.textContent = isHi ? 'विक्रम संवत' : 'Vikram Samvat';
+    if (dom.labelShakaSamvat) dom.labelShakaSamvat.textContent = isHi ? 'शक संवत' : 'Shaka Samvat';
+    if (dom.labelHinduMonth) dom.labelHinduMonth.textContent = isHi ? 'मास (महीना)' : 'Lunar Month (Masa)';
+    if (dom.labelRitu) dom.labelRitu.textContent = isHi ? 'ऋतु' : 'Season (Ritu)';
+    if (dom.labelSunSign) dom.labelSunSign.textContent = isHi ? 'सूर्य राशि (सौर)' : 'Sun Sign (Surya)';
+    if (dom.labelMoonSign) dom.labelMoonSign.textContent = isHi ? 'चन्द्र राशि' : 'Moon Sign (Chandra)';
+
+    // Date & Samvat Display
+    if (dom.panchangDateDisplay) dom.panchangDateDisplay.textContent = panchang.gregorianDateFormatted[lang] || panchang.gregorianDateFormatted.en;
+    if (dom.panchangSamvatDisplay) dom.panchangSamvatDisplay.textContent = panchang.samvat.display[lang] || panchang.samvat.display.en;
+
+    // Tithi Card
+    if (dom.panchangPakshaTag) dom.panchangPakshaTag.textContent = panchang.tithi.paksha[lang] || panchang.tithi.paksha.en;
+    if (dom.panchangTithiName) dom.panchangTithiName.textContent = panchang.tithi.name[lang] || panchang.tithi.name.en;
+    if (dom.panchangTithiEnds) dom.panchangTithiEnds.textContent = (isHi ? 'समाप्ति समय: ' : 'Ends at: ') + panchang.tithi.endTime;
+
+    // 4 Limbs Grid
+    if (dom.panchangVaar) dom.panchangVaar.textContent = panchang.vaar.name[lang] || panchang.vaar.name.en;
+    if (dom.panchangVaarDeity) dom.panchangVaarDeity.textContent = (isHi ? 'स्वामी: ' : 'Lord: ') + (panchang.vaar.lord[lang] || panchang.vaar.lord.en);
+
+    if (dom.panchangNakshatra) dom.panchangNakshatra.textContent = panchang.nakshatra.name[lang] || panchang.nakshatra.name.en;
+    if (dom.panchangNakshatraPada) dom.panchangNakshatraPada.textContent = (isHi ? 'पाद ' : 'Pada ') + panchang.nakshatra.pada + ' · ' + (isHi ? 'स्वामी: ' : 'Lord: ') + (panchang.nakshatra.lord[lang] || panchang.nakshatra.lord.en);
+
+    if (dom.panchangYoga) dom.panchangYoga.textContent = panchang.yoga.name[lang] || panchang.yoga.name.en;
+    if (dom.panchangYogaQuality) dom.panchangYogaQuality.textContent = panchang.yoga.quality[lang] || panchang.yoga.quality.en;
+
+    if (dom.panchangKarana) dom.panchangKarana.textContent = panchang.karana.name[lang] || panchang.karana.name.en;
+    if (dom.panchangKaranaSub) dom.panchangKaranaSub.textContent = panchang.karana.type[lang] || panchang.karana.type.en;
+
+    // Dynamic Muhurats
+    if (dom.panchangRahuTime) dom.panchangRahuTime.textContent = panchang.muhurats.rahuKaal.display;
+    if (dom.panchangAbhijitTime) dom.panchangAbhijitTime.textContent = panchang.muhurats.abhijit.display;
+    if (dom.panchangBrahmaTime) dom.panchangBrahmaTime.textContent = panchang.muhurats.brahmaMuhurat.display;
+    if (dom.panchangYamaTime) dom.panchangYamaTime.textContent = panchang.muhurats.yamaganda.display;
+    if (dom.panchangAmritTime) dom.panchangAmritTime.textContent = panchang.muhurats.amritKaal.display;
+    if (dom.panchangGodhuliTime) dom.panchangGodhuliTime.textContent = panchang.muhurats.godhuli.display;
+
+    // Samvat Specifications Grid
+    if (dom.panchangVikramVal) dom.panchangVikramVal.textContent = panchang.samvat.vikramSamvat;
+    if (dom.panchangShakaVal) dom.panchangShakaVal.textContent = panchang.samvat.shakaSamvat;
+    if (dom.panchangMonthVal) dom.panchangMonthVal.textContent = panchang.samvat.masa[lang] || panchang.samvat.masa.en;
+    if (dom.panchangRituVal) dom.panchangRituVal.textContent = panchang.samvat.ritu[lang] || panchang.samvat.ritu.en;
+    if (dom.panchangSunSign) dom.panchangSunSign.textContent = panchang.sunSign[lang] || panchang.sunSign.en;
+    if (dom.panchangMoonSign) dom.panchangMoonSign.textContent = panchang.moonSign[lang] || panchang.moonSign.en;
+}
+
+function renderHoroscope() {
+    if (!window.CosmicHoroscope) return;
+    const lang = state.cosmic.horoscopeLang || 'en';
+    const timeframe = state.cosmic.horoscopeTimeframe || 'daily';
+    const sign = state.cosmic.horoscopeSign || 'aries';
+    const isHi = lang === 'hi';
+
+    const reading = window.CosmicHoroscope.getReading(sign, timeframe, lang);
+    if (!reading) return;
+
+    // Synchronize Language Switcher UI
+    if (dom.horoscopeLangSwitch) {
+        dom.horoscopeLangSwitch.querySelectorAll('.lang-pill-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.lang === lang);
+        });
+    }
+
+    // Timeframe Buttons Active State & Labels
+    const tfButtons = [
+        { id: 'tfBtnDaily', tf: 'daily', labelEn: 'Daily', labelHi: 'दैनिक' },
+        { id: 'tfBtnWeekly', tf: 'weekly', labelEn: 'Weekly', labelHi: 'साप्ताहिक' },
+        { id: 'tfBtnMonthly', tf: 'monthly', labelEn: 'Monthly', labelHi: 'मासिक' },
+        { id: 'tfBtnYearly', tf: 'yearly', labelEn: 'Yearly', labelHi: 'वार्षिक' }
+    ];
+
+    tfButtons.forEach(item => {
+        const btn = dom[item.id];
+        if (btn) {
+            btn.classList.toggle('active', item.tf === timeframe);
+            const labelEl = btn.querySelector('.tf-btn-label');
+            if (labelEl) labelEl.textContent = isHi ? item.labelHi : item.labelEn;
+        }
+    });
+
+    // Populate or Update 12 Zodiac Carousel Chips
+    if (dom.zodiacSignsContainer) {
+        const signs = window.CosmicHoroscope.ZODIAC_SIGNS;
+        dom.zodiacSignsContainer.innerHTML = signs.map(s => {
+            const isActive = s.id === sign;
+            const signName = isHi ? s.hi : s.en;
+            return `
+                <button class="zodiac-chip-btn ${isActive ? 'active' : ''}" type="button" data-sign="${s.id}" title="${s.en} (${s.hi})">
+                    <span class="zodiac-chip-glyph">${s.glyph}</span>
+                    <span class="zodiac-chip-name">${signName}</span>
+                    <span class="zodiac-chip-element">${s.element}</span>
+                </button>
+            `;
+        }).join('');
+
+        dom.zodiacSignsContainer.querySelectorAll('.zodiac-chip-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                state.cosmic.horoscopeSign = btn.dataset.sign;
+                saveJson(STORAGE_KEYS.cosmic, state.cosmic);
+                renderHoroscope();
+            });
+        });
+    }
+
+    // Static Section Headings and Labels
+    if (dom.horoscopeHeading) dom.horoscopeHeading.textContent = isHi ? 'राशिफल व ग्रह दशा' : 'Cosmic Horoscope';
+    if (dom.horoscopeSubheading) dom.horoscopeSubheading.textContent = isHi ? 'सटीक वैदिक ज्योतिष भविष्यवाणियाँ' : 'Personalized Planetary Readings';
+    if (dom.labelLuckyNum) dom.labelLuckyNum.textContent = isHi ? 'शुभ अंक' : 'Lucky No.';
+    if (dom.labelLuckyColor) dom.labelLuckyColor.textContent = isHi ? 'शुभ रंग' : 'Color';
+    if (dom.labelRulingPlanet) dom.labelRulingPlanet.textContent = isHi ? 'स्वामी ग्रह' : 'Ruling Planet';
+    if (dom.labelElement) dom.labelElement.textContent = isHi ? 'तत्व' : 'Element';
+    if (dom.labelGeneralPred) dom.labelGeneralPred.textContent = isHi ? 'सामान्य अवलोकन' : 'Cosmic Overview';
+    if (dom.labelCareerPred) dom.labelCareerPred.textContent = isHi ? 'करियर एवं धन' : 'Career & Wealth';
+    if (dom.labelLovePred) dom.labelLovePred.textContent = isHi ? 'प्रेम एवं संबंध' : 'Love & Relationships';
+    if (dom.labelHealthPred) dom.labelHealthPred.textContent = isHi ? 'स्वास्थ्य एवं ऊर्जा' : 'Health & Vitality';
+    if (dom.labelCompat) dom.labelCompat.textContent = isHi ? 'शुभ अनुकूलता:' : 'Best Compatibility:';
+    if (dom.labelGemstone) dom.labelGemstone.textContent = isHi ? 'धारण योग्य रत्न:' : 'Presiding Gemstone:';
+
+    // Reading Values
+    if (dom.hrSignGlyph) dom.hrSignGlyph.textContent = reading.glyph;
+    if (dom.hrSignName) dom.hrSignName.textContent = reading.name;
+    if (dom.hrSignDates) dom.hrSignDates.textContent = reading.dates;
+    if (dom.hrHarmonyScore) dom.hrHarmonyScore.textContent = `${reading.harmony}%`;
+
+    if (dom.hrLuckyNum) dom.hrLuckyNum.textContent = reading.luckyNumber;
+    if (dom.hrLuckyColor) dom.hrLuckyColor.textContent = reading.luckyColor;
+    if (dom.hrPlanet) dom.hrPlanet.textContent = reading.rulingPlanet;
+    if (dom.hrElement) dom.hrElement.textContent = reading.element;
+
+    if (dom.hrOverviewText) dom.hrOverviewText.textContent = reading.general;
+    if (dom.hrCareerText) dom.hrCareerText.textContent = reading.career;
+    if (dom.hrLoveText) dom.hrLoveText.textContent = reading.love;
+    if (dom.hrHealthText) dom.hrHealthText.textContent = reading.health;
+
+    if (dom.hrCompatibleSigns) dom.hrCompatibleSigns.textContent = reading.compatibility;
+    if (dom.hrGemstone) dom.hrGemstone.textContent = reading.gemstone;
+}
+
+function initCosmicDrawer() {
+    // Tab Switching Listeners
+    dom.tabBtnPanchang?.addEventListener('click', () => switchCosmicTab('panchang'));
+    dom.tabBtnHoroscope?.addEventListener('click', () => switchCosmicTab('horoscope'));
+    dom.tabBtnPreferences?.addEventListener('click', () => switchCosmicTab('preferences'));
+
+    // Panchang Language Switcher
+    if (dom.panchangLangSwitch) {
+        dom.panchangLangSwitch.querySelectorAll('.lang-pill-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                state.cosmic.panchangLang = btn.dataset.lang;
+                saveJson(STORAGE_KEYS.cosmic, state.cosmic);
+                renderPanchang();
+            });
+        });
+    }
+
+    // Horoscope Language Switcher
+    if (dom.horoscopeLangSwitch) {
+        dom.horoscopeLangSwitch.querySelectorAll('.lang-pill-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                state.cosmic.horoscopeLang = btn.dataset.lang;
+                saveJson(STORAGE_KEYS.cosmic, state.cosmic);
+                renderHoroscope();
+            });
+        });
+    }
+
+    // Horoscope Timeframe Switcher
+    const timeframes = ['daily', 'weekly', 'monthly', 'yearly'];
+    timeframes.forEach(tf => {
+        const btnId = 'tfBtn' + tf.charAt(0).toUpperCase() + tf.slice(1);
+        dom[btnId]?.addEventListener('click', () => {
+            state.cosmic.horoscopeTimeframe = tf;
+            saveJson(STORAGE_KEYS.cosmic, state.cosmic);
+            renderHoroscope();
+        });
+    });
+
+    // Initial state setup
+    switchCosmicTab(state.cosmic.activeTab || 'panchang');
+}
+
 function initGeolocation() {
     detectUserLocation(false);
 }
@@ -1706,6 +2003,7 @@ document.addEventListener('DOMContentLoaded', () => {
     hideLoadingScreen();
     initClock();
     initSettings();
+    initCosmicDrawer();
     initSearch();
     initWorldClockSearch();
     initGlobalShortcuts();
