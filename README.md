@@ -46,12 +46,24 @@
 - **Zero Audio Assets Required**: Uses the native Web Audio API to procedurally synthesize gentle rain, wind sweeps, distant soft thunder rumbles, and calm sunny pads.
 - **Header Soundwave Equalizer**: Instant 1-click toggle with animated equalizer visualizer bars.
 
-### 7. Vedic Panchang (पंचांग) & Dual-Language Horoscope (राशिफल)
-- **Top Sidebar Cosmic Drawer**: Integrated cleanly at the top of the sidebar section with quick-access navigation pills (`[🕉️ Panchang]`, `[🔮 Horoscope]`, `[⚙️ Settings]`).
-- **Real-Time Vedic Almanac**: Computes exact Tithi (and Paksha), Vaar with planetary lord & presiding deity, Nakshatra with Pada, Yoga, Karana, Samvat (Vikram Samvat 2083, Shaka 1948, Masa, Ritu, Ayana), dynamic Muhurats (Rahu Kaal, Abhijit Muhurat, Brahma Muhurat, Yamaganda, Amrit Kaal, Godhuli), and Sun/Moon signs.
-- **Bilingual Dual-Language Horoscope**: Comprehensive Daily, Weekly, Monthly, and Yearly readings for all 12 zodiac signs (Aries through Pisces / मेष through मीन) in English & Hindi across 4 life domains (Cosmic Overview, Career & Wealth, Love & Relationships, Health & Vitality) with Lucky Traits, Harmony Scores, Compatibility, and Gemstones.
+### 7. Dual-Mode Chronometer (Analog & Digital Watch System)
+- **3D Morphing Transitions**: Seamless 3D flip between digital readout and high-precision analog watch face.
+- **Continuous Sweeping Hands**: Mechanical-grade continuous second-hand sweep with hour, minute, date window, and glass bevel reflections.
+- **Multiple Watch Faces & Fonts**:
+  - **Cyberpunk Neon**: Glowing cyan/magenta HUD styling with `Orbitron` futuristic font.
+  - **Swiss Luxury Chronometer**: Elegant Roman numerals (XII, III, VI, IX) with `Cinzel` serif typography and gold guilloché dial.
+  - **Minimalist Bauhaus**: Clean geometric markers with `Inter` ultra-thin typography.
+  - **Amber Retro Terminal**: Vintage CRT/Nixie phosphor glow with monospace typography.
 
-### 8. World Clock Hub & Global Search
+### 8. Vedic Panchang (पंचांग) & Dual-Language Cosmic Horoscope Hub
+- **Prominent Main Dashboard Placement**: Located directly above the World Clock Hub with instant local computation and zero network lag.
+- **Interactive 12-Sign Zodiac Carousel**: Click any zodiac sign to instantly pick and display your personal astrological reading.
+- **Multi-Horizon Forecasts**: Daily (दैनिक), Weekly (साप्ताहिक), Monthly (मासिक), and Yearly (वार्षिक) astrological transits.
+- **4 Life Domains**: Cosmic Overview, Career & Wealth, Love & Relationships, and Health & Vitality with lucky attributes, harmony score, compatibility, and presiding gemstone.
+- **Real-Time Vedic Almanac (पंचांग)**: Real-time Tithi, Vaar, Nakshatra, Yoga, Karana, Samvat (Vikram & Shaka), dynamic Muhurats (Rahu Kaal with active warning alert, Abhijit Muhurat with active victory alert, Brahma, Yamaganda, Amrit Kaal, Godhuli), and Sun/Moon signs.
+- **Instant Dual-Language Toggle**: Switch effortlessly between English and हिन्दी.
+
+### 9. World Clock Hub & Global Search
 - Real-time global clocks with local times, day/night ambient badges, and user-relative time offsets.
 - Instant location search with geocoding autocomplete and keyboard navigation (`/` or `Ctrl+K` / `Cmd+K` shortcut).
 

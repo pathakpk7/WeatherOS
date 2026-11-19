@@ -10,7 +10,7 @@
     <!-- Design System Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Stylesheets in Strict Cascading Order -->
     <link rel="stylesheet" href="css/animations.css">
@@ -72,444 +72,134 @@
         <div class="search-results" id="searchResults"></div>
     </aside>
 
-    <!-- Cosmic & Settings Drawer Panel -->
-    <aside class="settings-panel cosmic-drawer" id="settingsPanel" aria-label="Cosmic Ephemeris & System Preferences">
+    <!-- System Settings & Preferences Drawer -->
+    <aside class="settings-panel" id="settingsPanel" aria-label="System Settings & Preferences">
         <div class="panel-header">
-            <div class="panel-header-title-wrap">
-                <h2 id="sidebarDrawerTitle">Vedic Panchang</h2>
-                <span class="panel-header-sub" id="sidebarDrawerSubtitle">Vedic Almanac & Daily Rashifal</span>
-            </div>
-            <button class="close-panel-btn" id="closeSettings" type="button" aria-label="Close panel">×</button>
+            <h2>Preferences & Engine</h2>
+            <button class="close-panel-btn" id="closeSettings" type="button" aria-label="Close settings">×</button>
         </div>
-
-        <!-- Top Sidebar Feature Tabs -->
-        <div class="sidebar-top-tabs" role="tablist" aria-label="Sidebar Sections">
-            <button class="sidebar-tab-btn active" id="tabBtnPanchang" role="tab" aria-selected="true" data-tab="panchang">
-                <span class="tab-btn-icon">🕉️</span>
-                <span class="tab-btn-text">Panchang</span>
-            </button>
-            <button class="sidebar-tab-btn" id="tabBtnHoroscope" role="tab" aria-selected="false" data-tab="horoscope">
-                <span class="tab-btn-icon">🔮</span>
-                <span class="tab-btn-text">Horoscope</span>
-            </button>
-            <button class="sidebar-tab-btn" id="tabBtnPreferences" role="tab" aria-selected="false" data-tab="preferences">
-                <span class="tab-btn-icon">⚙️</span>
-                <span class="tab-btn-text">Settings</span>
-            </button>
-        </div>
-
-        <!-- TAB PANE 1: VEDIC PANCHANG -->
-        <div class="sidebar-tab-pane active" id="panePanchang" role="tabpanel">
-            <div class="cosmic-pane-header">
-                <div class="cosmic-date-badge">
-                    <span class="cosmic-cal-icon">🗓️</span>
-                    <div>
-                        <div class="cosmic-date-title" id="panchangDateDisplay">Loading Vedic Almanac...</div>
-                        <div class="cosmic-samvat-sub" id="panchangSamvatDisplay">Vikram Samvat 2083 · Shaka 1948</div>
-                    </div>
+        <div class="settings-content">
+            <div class="setting-group">
+                <label for="placeSearch">Default Location</label>
+                <div class="place-control">
+                    <input type="text" id="placeSearch" placeholder="City or coordinates" autocomplete="off">
+                    <button type="button" id="placeApply">Apply</button>
+                    <button type="button" id="placeGpsBtn" class="gps-icon-btn" title="Detect My Location">
+                        <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+                    </button>
                 </div>
-                <!-- Dual Language Toggle -->
-                <div class="dual-lang-switch" id="panchangLangSwitch">
-                    <button class="lang-pill-btn active" data-lang="en" type="button">English</button>
-                    <button class="lang-pill-btn" data-lang="hi" type="button">हिन्दी</button>
+                <div class="current-place" id="currentPlace">Using detected location</div>
+            </div>
+
+            <div class="setting-group">
+                <label for="countrySelect">Preset Nations</label>
+                <select id="countrySelect" class="select-control">
+                    <option value="">Select country...</option>
+                    <option value="IN">India (New Delhi)</option>
+                    <option value="GB">United Kingdom (London)</option>
+                    <option value="US">United States (Washington)</option>
+                    <option value="JP">Japan (Tokyo)</option>
+                    <option value="AU">Australia (Canberra)</option>
+                    <option value="AE">United Arab Emirates (Abu Dhabi)</option>
+                    <option value="SG">Singapore</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label>Interface Theme</label>
+                <div class="theme-options">
+                    <button class="theme-btn active" type="button" data-theme="auto">Adaptive</button>
+                    <button class="theme-btn" type="button" data-theme="light">Light</button>
+                    <button class="theme-btn" type="button" data-theme="dark">Dark</button>
                 </div>
             </div>
 
-            <!-- Tithi Hero Highlight Card -->
-            <div class="panchang-hero-card">
-                <div class="panchang-hero-badge" id="panchangPakshaTag">Shukla Paksha</div>
-                <div class="panchang-tithi-name" id="panchangTithiName">Dashami Tithi</div>
-                <div class="panchang-tithi-ends" id="panchangTithiEnds">Ends at --:--</div>
-            </div>
-
-            <!-- 5 Essential Limbs of Panchang (पञ्चाङ्ग) -->
-            <div class="panchang-limbs-grid">
-                <div class="limb-card">
-                    <span class="limb-icon">📅</span>
-                    <span class="limb-label" id="labelVaar">Solar Day (Vaar)</span>
-                    <span class="limb-val" id="panchangVaar">--</span>
-                    <span class="limb-sub" id="panchangVaarDeity">Lord: --</span>
-                </div>
-                <div class="limb-card">
-                    <span class="limb-icon">✨</span>
-                    <span class="limb-label" id="labelNakshatra">Nakshatra</span>
-                    <span class="limb-val" id="panchangNakshatra">--</span>
-                    <span class="limb-sub" id="panchangNakshatraPada">Pada -- · Lord: --</span>
-                </div>
-                <div class="limb-card">
-                    <span class="limb-icon">🧘</span>
-                    <span class="limb-label" id="labelYoga">Yoga</span>
-                    <span class="limb-val" id="panchangYoga">--</span>
-                    <span class="limb-sub" id="panchangYogaQuality">Auspicious Transit</span>
-                </div>
-                <div class="limb-card">
-                    <span class="limb-icon">⚡</span>
-                    <span class="limb-label" id="labelKarana">Karana</span>
-                    <span class="limb-val" id="panchangKarana">--</span>
-                    <span class="limb-sub" id="panchangKaranaSub">Active Half</span>
+            <div class="setting-group">
+                <label>Temperature Unit</label>
+                <div class="unit-options">
+                    <button class="unit-btn active" type="button" data-unit="celsius">Celsius (°C)</button>
+                    <button class="unit-btn" type="button" data-unit="fahrenheit">Fahrenheit (°F)</button>
                 </div>
             </div>
 
-            <!-- Auspicious & Inauspicious Muhurats Matrix -->
-            <div class="muhurat-section-title">
-                <span id="labelMuhuratHeader">Auspicious & Inauspicious Timings</span>
+            <div class="setting-group">
+                <label>
+                    <span>24-Hour Time Format</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="timeFormatToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
             </div>
 
-            <div class="muhurat-list">
-                <!-- Rahu Kaal (Inauspicious) -->
-                <div class="muhurat-item danger-item" id="rahuKaalCard">
-                    <div class="muhurat-item-left">
-                        <span class="muhurat-status-indicator red-dot"></span>
-                        <div>
-                            <div class="muhurat-name" id="labelRahuKaal">Rahu Kaal (राहु काल)</div>
-                            <div class="muhurat-advice" id="adviceRahuKaal">Avoid starting auspicious deeds</div>
-                        </div>
+            <div class="setting-group">
+                <label>
+                    <span>Interactive Micro-Animations</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="animationsToggle" checked>
+                        <span class="toggle-slider"></span>
                     </div>
-                    <div class="muhurat-time" id="panchangRahuTime">--:-- - --:--</div>
-                </div>
-
-                <!-- Abhijit Muhurat (Highly Auspicious) -->
-                <div class="muhurat-item success-item" id="abhijitCard">
-                    <div class="muhurat-item-left">
-                        <span class="muhurat-status-indicator green-dot"></span>
-                        <div>
-                            <div class="muhurat-name" id="labelAbhijit">Abhijit Muhurat (अभिजीत)</div>
-                            <div class="muhurat-advice" id="adviceAbhijit">Supreme victory window for all actions</div>
-                        </div>
-                    </div>
-                    <div class="muhurat-time" id="panchangAbhijitTime">--:-- - --:--</div>
-                </div>
-
-                <!-- Brahma Muhurat -->
-                <div class="muhurat-item spiritual-item">
-                    <div class="muhurat-item-left">
-                        <span class="muhurat-status-indicator purple-dot"></span>
-                        <div>
-                            <div class="muhurat-name" id="labelBrahma">Brahma Muhurat (ब्रह्म मुहूर्त)</div>
-                            <div class="muhurat-advice" id="adviceBrahma">Optimal for meditation & sadhana</div>
-                        </div>
-                    </div>
-                    <div class="muhurat-time" id="panchangBrahmaTime">--:-- - --:--</div>
-                </div>
-
-                <!-- Yamaganda -->
-                <div class="muhurat-item neutral-item">
-                    <div class="muhurat-item-left">
-                        <span class="muhurat-status-indicator yellow-dot"></span>
-                        <div>
-                            <div class="muhurat-name" id="labelYamaganda">Yamaganda (यमगण्ड)</div>
-                            <div class="muhurat-advice" id="adviceYamaganda">Inauspicious journey period</div>
-                        </div>
-                    </div>
-                    <div class="muhurat-time" id="panchangYamaTime">--:-- - --:--</div>
-                </div>
-
-                <!-- Amrit Kaal -->
-                <div class="muhurat-item success-item">
-                    <div class="muhurat-item-left">
-                        <span class="muhurat-status-indicator green-dot"></span>
-                        <div>
-                            <div class="muhurat-name" id="labelAmrit">Amrit Kaal (अमृत काल)</div>
-                            <div class="muhurat-advice" id="adviceAmrit">Nectar time for success & ceremonies</div>
-                        </div>
-                    </div>
-                    <div class="muhurat-time" id="panchangAmritTime">--:-- - --:--</div>
-                </div>
-
-                <!-- Godhuli Muhurat -->
-                <div class="muhurat-item gold-item">
-                    <div class="muhurat-item-left">
-                        <span class="muhurat-status-indicator gold-dot"></span>
-                        <div>
-                            <div class="muhurat-name" id="labelGodhuli">Godhuli (गोधूलि मुहूर्त)</div>
-                            <div class="muhurat-advice" id="adviceGodhuli">Evening twilight auspiciousness</div>
-                        </div>
-                    </div>
-                    <div class="muhurat-time" id="panchangGodhuliTime">--:-- - --:--</div>
-                </div>
+                </label>
             </div>
 
-            <!-- Samvat & Planetary Rashi Details -->
-            <div class="muhurat-section-title">
-                <span id="labelSamvatDetails">Samvat & Astronomical Transit</span>
-            </div>
-            <div class="samvat-specs-grid">
-                <div class="samvat-spec-item">
-                    <span class="samvat-key" id="labelVikramSamvat">Vikram Samvat</span>
-                    <span class="samvat-val" id="panchangVikramVal">2083</span>
-                </div>
-                <div class="samvat-spec-item">
-                    <span class="samvat-key" id="labelShakaSamvat">Shaka Samvat</span>
-                    <span class="samvat-val" id="panchangShakaVal">1948</span>
-                </div>
-                <div class="samvat-spec-item">
-                    <span class="samvat-key" id="labelHinduMonth">Lunar Month (Masa)</span>
-                    <span class="samvat-val" id="panchangMonthVal">Kartika</span>
-                </div>
-                <div class="samvat-spec-item">
-                    <span class="samvat-key" id="labelRitu">Season (Ritu)</span>
-                    <span class="samvat-val" id="panchangRituVal">Sharad</span>
-                </div>
-                <div class="samvat-spec-item">
-                    <span class="samvat-key" id="labelSunSign">Sun Sign (Surya)</span>
-                    <span class="samvat-val" id="panchangSunSign">Scorpio ♏</span>
-                </div>
-                <div class="samvat-spec-item">
-                    <span class="samvat-key" id="labelMoonSign">Moon Sign (Chandra)</span>
-                    <span class="samvat-val" id="panchangMoonSign">Taurus ♉</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB PANE 2: DUAL LANGUAGE HOROSCOPE -->
-        <div class="sidebar-tab-pane" id="paneHoroscope" role="tabpanel">
-            <div class="cosmic-pane-header">
-                <div>
-                    <div class="cosmic-date-title" id="horoscopeHeading">Cosmic Horoscope</div>
-                    <div class="cosmic-samvat-sub" id="horoscopeSubheading">Personalized Planetary Readings</div>
-                </div>
-                <!-- Dual Language Toggle -->
-                <div class="dual-lang-switch" id="horoscopeLangSwitch">
-                    <button class="lang-pill-btn active" data-lang="en" type="button">English</button>
-                    <button class="lang-pill-btn" data-lang="hi" type="button">हिन्दी</button>
-                </div>
+            <div class="setting-group">
+                <label>
+                    <span>Weather Particles (Rain/Snow/Stars)</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="particlesToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
             </div>
 
-            <!-- Timeframe Horizon Switcher (Daily, Weekly, Monthly, Yearly) -->
-            <div class="horoscope-timeframe-bar" role="tablist">
-                <button class="timeframe-btn active" data-tf="daily" type="button" id="tfBtnDaily">
-                    <span>📅</span>
-                    <span class="tf-btn-label">Daily</span>
-                </button>
-                <button class="timeframe-btn" data-tf="weekly" type="button" id="tfBtnWeekly">
-                    <span>🗓️</span>
-                    <span class="tf-btn-label">Weekly</span>
-                </button>
-                <button class="timeframe-btn" data-tf="monthly" type="button" id="tfBtnMonthly">
-                    <span>🌕</span>
-                    <span class="tf-btn-label">Monthly</span>
-                </button>
-                <button class="timeframe-btn" data-tf="yearly" type="button" id="tfBtnYearly">
-                    <span>✨</span>
-                    <span class="tf-btn-label">Yearly</span>
-                </button>
+            <div class="setting-group">
+                <label>
+                    <span>Aurora Borealis Effect</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="auroraToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
             </div>
 
-            <!-- 12 Zodiac Signs Strip -->
-            <div class="zodiac-carousel-strip" id="zodiacSignsContainer" aria-label="Select Zodiac Sign">
-                <!-- Dynamically populated via horoscope.js / app.js -->
+            <div class="setting-group">
+                <label>
+                    <span>Volumetric Background Effects</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="backgroundToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
             </div>
 
-            <!-- Active Horoscope Display Showcase -->
-            <div class="horoscope-reading-card" id="horoscopeReadingDisplay">
-                <div class="reading-header-row">
-                    <div class="reading-sign-badge">
-                        <span class="reading-glyph" id="hrSignGlyph">♈</span>
-                        <div>
-                            <h3 class="reading-sign-name" id="hrSignName">Aries (मेष)</h3>
-                            <span class="reading-sign-dates" id="hrSignDates">Mar 21 - Apr 19</span>
-                        </div>
+            <div class="setting-group">
+                <label>
+                    <span>Ambient Procedural Audio</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="ambientSoundsToggle">
+                        <span class="toggle-slider"></span>
                     </div>
-                    <div class="reading-harmony-pill" id="hrHarmonyPill">
-                        <span class="harmony-label">Harmony</span>
-                        <span class="harmony-score" id="hrHarmonyScore">94%</span>
-                    </div>
-                </div>
-
-                <!-- Cosmic Attribute Highlights (Lucky Number, Color, Gem, Planet) -->
-                <div class="cosmic-lucky-bar">
-                    <div class="lucky-item">
-                        <span class="lucky-label" id="labelLuckyNum">Lucky No.</span>
-                        <span class="lucky-val" id="hrLuckyNum">9</span>
-                    </div>
-                    <div class="lucky-item">
-                        <span class="lucky-label" id="labelLuckyColor">Color</span>
-                        <span class="lucky-val" id="hrLuckyColor">Crimson Red</span>
-                    </div>
-                    <div class="lucky-item">
-                        <span class="lucky-label" id="labelRulingPlanet">Ruling Planet</span>
-                        <span class="lucky-val" id="hrPlanet">Mars</span>
-                    </div>
-                    <div class="lucky-item">
-                        <span class="lucky-label" id="labelElement">Element</span>
-                        <span class="lucky-val" id="hrElement">Fire</span>
-                    </div>
-                </div>
-
-                <!-- 4 Life Domains Reading Cards -->
-                <div class="prediction-sections-stack">
-                    <div class="prediction-block">
-                        <div class="pred-block-header">
-                            <span class="pred-icon">🌟</span>
-                            <span class="pred-title" id="labelGeneralPred">Cosmic Overview</span>
-                        </div>
-                        <p class="pred-body-text" id="hrOverviewText">Loading astrological forecast...</p>
-                    </div>
-
-                    <div class="prediction-block">
-                        <div class="pred-block-header">
-                            <span class="pred-icon">💼</span>
-                            <span class="pred-title" id="labelCareerPred">Career & Wealth</span>
-                        </div>
-                        <p class="pred-body-text" id="hrCareerText">--</p>
-                    </div>
-
-                    <div class="prediction-block">
-                        <div class="pred-block-header">
-                            <span class="pred-icon">💖</span>
-                            <span class="pred-title" id="labelLovePred">Love & Relationships</span>
-                        </div>
-                        <p class="pred-body-text" id="hrLoveText">--</p>
-                    </div>
-
-                    <div class="prediction-block">
-                        <div class="pred-block-header">
-                            <span class="pred-icon">🌿</span>
-                            <span class="pred-title" id="labelHealthPred">Health & Vitality</span>
-                        </div>
-                        <p class="pred-body-text" id="hrHealthText">--</p>
-                    </div>
-                </div>
-
-                <!-- Cosmic Advice & Compatibility Footer -->
-                <div class="reading-meta-footer">
-                    <div class="compat-row">
-                        <span class="compat-label" id="labelCompat">Best Compatibility:</span>
-                        <span class="compat-val" id="hrCompatibleSigns">Leo, Sagittarius, Gemini</span>
-                    </div>
-                    <div class="gemstone-row">
-                        <span class="gem-label" id="labelGemstone">Presiding Gemstone:</span>
-                        <span class="gem-val" id="hrGemstone">Red Coral (Moonga)</span>
-                    </div>
-                </div>
+                </label>
             </div>
-        </div>
 
-        <!-- TAB PANE 3: SYSTEM PREFERENCES -->
-        <div class="sidebar-tab-pane" id="panePreferences" role="tabpanel">
-            <div class="settings-content">
-                <div class="setting-group">
-                    <label for="placeSearch">Default Location</label>
-                    <div class="place-control">
-                        <input type="text" id="placeSearch" placeholder="City or coordinates" autocomplete="off">
-                        <button type="button" id="placeApply">Apply</button>
-                        <button type="button" id="placeGpsBtn" class="gps-icon-btn" title="Detect My Location">
-                            <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
-                        </button>
+            <div class="setting-group">
+                <label for="soundVolumeRange">Sound Volume <span id="soundVolumeValue">35%</span></label>
+                <input class="range-control" type="range" id="soundVolumeRange" min="0" max="100" value="35">
+            </div>
+
+            <div class="setting-group">
+                <label for="glassBlurRange">Frosted Glass Blur <span id="glassBlurValue">14px</span></label>
+                <input class="range-control" type="range" id="glassBlurRange" min="0" max="28" value="14">
+            </div>
+
+            <div class="setting-group">
+                <label>
+                    <span>Reduce Motion Accessibility</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="reduceMotionToggle">
+                        <span class="toggle-slider"></span>
                     </div>
-                    <div class="current-place" id="currentPlace">Using detected location</div>
-                </div>
-
-                <div class="setting-group">
-                    <label for="countrySelect">Preset Nations</label>
-                    <select id="countrySelect" class="select-control">
-                        <option value="">Select country...</option>
-                        <option value="IN">India (New Delhi)</option>
-                        <option value="GB">United Kingdom (London)</option>
-                        <option value="US">United States (Washington)</option>
-                        <option value="JP">Japan (Tokyo)</option>
-                        <option value="AU">Australia (Canberra)</option>
-                        <option value="AE">United Arab Emirates (Abu Dhabi)</option>
-                        <option value="SG">Singapore</option>
-                    </select>
-                </div>
-
-                <div class="setting-group">
-                    <label>Interface Theme</label>
-                    <div class="theme-options">
-                        <button class="theme-btn active" type="button" data-theme="auto">Adaptive</button>
-                        <button class="theme-btn" type="button" data-theme="light">Light</button>
-                        <button class="theme-btn" type="button" data-theme="dark">Dark</button>
-                    </div>
-                </div>
-
-                <div class="setting-group">
-                    <label>Temperature Unit</label>
-                    <div class="unit-options">
-                        <button class="unit-btn active" type="button" data-unit="celsius">Celsius (°C)</button>
-                        <button class="unit-btn" type="button" data-unit="fahrenheit">Fahrenheit (°F)</button>
-                    </div>
-                </div>
-
-                <div class="setting-group">
-                    <label>
-                        <span>24-Hour Time Format</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="timeFormatToggle" checked>
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="setting-group">
-                    <label>
-                        <span>Interactive Micro-Animations</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="animationsToggle" checked>
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="setting-group">
-                    <label>
-                        <span>Weather Particles (Rain/Snow/Stars)</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="particlesToggle" checked>
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="setting-group">
-                    <label>
-                        <span>Aurora Borealis Effect</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="auroraToggle" checked>
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="setting-group">
-                    <label>
-                        <span>Volumetric Background Effects</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="backgroundToggle" checked>
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="setting-group">
-                    <label>
-                        <span>Ambient Procedural Audio</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="ambientSoundsToggle">
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="setting-group">
-                    <label for="soundVolumeRange">Sound Volume <span id="soundVolumeValue">35%</span></label>
-                    <input class="range-control" type="range" id="soundVolumeRange" min="0" max="100" value="35">
-                </div>
-
-                <div class="setting-group">
-                    <label for="glassBlurRange">Frosted Glass Blur <span id="glassBlurValue">14px</span></label>
-                    <input class="range-control" type="range" id="glassBlurRange" min="0" max="28" value="14">
-                </div>
-
-                <div class="setting-group">
-                    <label>
-                        <span>Reduce Motion Accessibility</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="reduceMotionToggle">
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </label>
-                </div>
+                </label>
             </div>
         </div>
     </aside>
@@ -574,9 +264,62 @@
                 </div>
 
                 <div class="hero-clock-wrapper" data-parallax="0.2">
-                    <div class="hero-clock" id="heroClock">
-                        <span id="hours">00</span><span class="clock-colon">:</span><span id="minutes">00</span><span class="clock-colon">:</span><span id="seconds">00</span>
-                        <span class="clock-period" id="timePeriod"></span>
+                    <!-- Chrono Mode & Watch Style Switchers -->
+                    <div class="chrono-controls-bar">
+                        <div class="chrono-mode-switch" role="tablist" aria-label="Clock Display Mode">
+                            <button class="chrono-mode-btn active" id="btnClockDigital" type="button" data-mode="digital">
+                                <span>🔢</span> Digital
+                            </button>
+                            <button class="chrono-mode-btn" id="btnClockAnalog" type="button" data-mode="analog">
+                                <span>🕒</span> Analog
+                            </button>
+                        </div>
+                        <div class="chrono-style-selector" role="group" aria-label="Watch Typography & Style">
+                            <button class="chrono-style-chip active" data-style="cyber" type="button" title="Cyberpunk Neon">Cyber</button>
+                            <button class="chrono-style-chip" data-style="swiss" type="button" title="Swiss Luxury Chronometer">Swiss</button>
+                            <button class="chrono-style-chip" data-style="bauhaus" type="button" title="Minimalist Bauhaus">Minimal</button>
+                            <button class="chrono-style-chip" data-style="amber" type="button" title="Amber Retro Terminal">Amber</button>
+                        </div>
+                    </div>
+
+                    <!-- 3D Morphing Dual-Face Chrono Container -->
+                    <div class="hero-chrono-container mode-digital style-cyber" id="heroChronoContainer">
+                        <!-- Digital Face -->
+                        <div class="chrono-face chrono-digital" id="chronoDigitalFace">
+                            <div class="hero-clock" id="heroClock">
+                                <span id="hours">00</span><span class="clock-colon">:</span><span id="minutes">00</span><span class="clock-colon">:</span><span id="seconds">00</span>
+                                <span class="clock-period" id="timePeriod"></span>
+                            </div>
+                        </div>
+
+                        <!-- Analog Face (Precision Watch Face) -->
+                        <div class="chrono-face chrono-analog" id="chronoAnalogFace">
+                            <div class="analog-watch-case">
+                                <div class="analog-bezel">
+                                    <div class="analog-dial" id="analogDial">
+                                        <!-- Hour Markers & Roman/Numeric Numerals -->
+                                        <div class="analog-indices-ring" id="analogIndicesRing">
+                                            <span class="dial-mark mark-12">XII</span>
+                                            <span class="dial-mark mark-3">III</span>
+                                            <span class="dial-mark mark-6">VI</span>
+                                            <span class="dial-mark mark-9">IX</span>
+                                        </div>
+                                        <div class="analog-brand-mark">
+                                            <span class="analog-brand-name">WEATHEROS</span>
+                                            <span class="analog-brand-sub">CHRONOGRAPH</span>
+                                        </div>
+                                        <div class="analog-date-complication" id="analogDateWindow">--</div>
+                                        
+                                        <!-- Hands -->
+                                        <div class="analog-hand hand-hour" id="analogHourHand"></div>
+                                        <div class="analog-hand hand-minute" id="analogMinuteHand"></div>
+                                        <div class="analog-hand hand-second" id="analogSecondHand"></div>
+                                        <div class="analog-center-cap"></div>
+                                        <div class="analog-glass-shimmer"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1060,6 +803,316 @@
 
             <div class="daily-forecast-grid" id="forecastGrid">
                 <!-- Dynamically populated via app.js -->
+            </div>
+        </section>
+
+        <!-- Vedic Panchang & Dual-Language Cosmic Horoscope Hub -->
+        <section class="section-wrapper cosmic-hub-section" id="cosmicHubSection">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <h3 class="section-title">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                        <span id="cosmicHubTitle">Vedic Panchang & Cosmic Horoscope</span>
+                    </h3>
+                    <div class="cosmic-header-meta">
+                        <span class="cosmic-samvat-badge" id="cosmicSamvatDisplay">Vikram Samvat 2083 · Shaka 1948</span>
+                        <span class="cosmic-date-badge" id="cosmicDateDisplay">Loading Vedic Almanac...</span>
+                    </div>
+                </div>
+
+                <!-- Dual Language Selector (English / हिन्दी) -->
+                <div class="cosmic-header-actions">
+                    <div class="dual-lang-switch" id="mainCosmicLangSwitch">
+                        <button class="lang-pill-btn active" data-lang="en" type="button">English</button>
+                        <button class="lang-pill-btn" data-lang="hi" type="button">हिन्दी</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Segmented Switcher: [🕉️ Vedic Panchang] and [🔮 Cosmic Horoscope] -->
+            <div class="cosmic-segmented-nav" role="tablist" aria-label="Cosmic Sections">
+                <button class="cosmic-nav-pill active" id="cosmicNavPanchang" role="tab" aria-selected="true" data-tab="panchang">
+                    <span class="nav-pill-icon">🕉️</span>
+                    <span class="nav-pill-text" id="labelNavPanchang">Vedic Panchang (पंचांग)</span>
+                </button>
+                <button class="cosmic-nav-pill" id="cosmicNavHoroscope" role="tab" aria-selected="false" data-tab="horoscope">
+                    <span class="nav-pill-icon">🔮</span>
+                    <span class="nav-pill-text" id="labelNavHoroscope">Cosmic Horoscope (राशिफल)</span>
+                </button>
+            </div>
+
+            <!-- TAB 1: VEDIC PANCHANG VIEW -->
+            <div class="cosmic-tab-content active" id="cosmicPanchangPane" role="tabpanel">
+                <div class="panchang-deck-layout">
+                    <!-- Left Column: Tithi Hero & 4 Limbs Grid -->
+                    <div class="panchang-left-col">
+                        <!-- Tithi Highlight Card -->
+                        <div class="panchang-hero-card">
+                            <div class="panchang-hero-glow"></div>
+                            <div class="panchang-hero-top">
+                                <span class="panchang-paksha-pill" id="panchangPakshaTag">Shukla Paksha</span>
+                                <span class="panchang-ends-text" id="panchangTithiEnds">Ends at --:--</span>
+                            </div>
+                            <h4 class="panchang-tithi-title" id="panchangTithiName">Dashami Tithi</h4>
+                            <p class="panchang-tithi-desc" id="panchangTithiDesc">Optimal alignment of solar and lunar longitudinal rays.</p>
+                        </div>
+
+                        <!-- 4 Limbs of Panchang Grid -->
+                        <div class="panchang-limbs-grid">
+                            <div class="limb-card">
+                                <div class="limb-header">
+                                    <span class="limb-icon">📅</span>
+                                    <span class="limb-label" id="labelVaar">Solar Day (Vaar)</span>
+                                </div>
+                                <div class="limb-val" id="panchangVaar">--</div>
+                                <div class="limb-sub" id="panchangVaarDeity">Lord: --</div>
+                            </div>
+                            <div class="limb-card">
+                                <div class="limb-header">
+                                    <span class="limb-icon">✨</span>
+                                    <span class="limb-label" id="labelNakshatra">Nakshatra</span>
+                                </div>
+                                <div class="limb-val" id="panchangNakshatra">--</div>
+                                <div class="limb-sub" id="panchangNakshatraPada">Pada -- · Lord: --</div>
+                            </div>
+                            <div class="limb-card">
+                                <div class="limb-header">
+                                    <span class="limb-icon">🧘</span>
+                                    <span class="limb-label" id="labelYoga">Yoga</span>
+                                </div>
+                                <div class="limb-val" id="panchangYoga">--</div>
+                                <div class="limb-sub" id="panchangYogaQuality">Auspicious Transit</div>
+                            </div>
+                            <div class="limb-card">
+                                <div class="limb-header">
+                                    <span class="limb-icon">⚡</span>
+                                    <span class="limb-label" id="labelKarana">Karana</span>
+                                </div>
+                                <div class="limb-val" id="panchangKarana">--</div>
+                                <div class="limb-sub" id="panchangKaranaSub">Active Half</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Muhurats Matrix & Samvat Specifications -->
+                    <div class="panchang-right-col">
+                        <div class="panchang-sub-card">
+                            <div class="sub-card-title">
+                                <span class="sub-title-text" id="labelMuhuratHeader">Auspicious & Inauspicious Muhurats</span>
+                            </div>
+
+                            <div class="muhurats-compact-grid">
+                                <!-- Rahu Kaal (Red) -->
+                                <div class="muhurat-badge-card danger-card" id="rahuKaalCard">
+                                    <div class="muhurat-badge-header">
+                                        <span class="muhurat-dot red-pulse"></span>
+                                        <span class="muhurat-title" id="labelRahuKaal">Rahu Kaal (राहु काल)</span>
+                                        <span class="muhurat-time" id="panchangRahuTime">--:-- - --:--</span>
+                                    </div>
+                                    <span class="muhurat-guidance" id="adviceRahuKaal">Avoid starting auspicious deeds</span>
+                                </div>
+
+                                <!-- Abhijit Muhurat (Green) -->
+                                <div class="muhurat-badge-card success-card" id="abhijitCard">
+                                    <div class="muhurat-badge-header">
+                                        <span class="muhurat-dot green-pulse"></span>
+                                        <span class="muhurat-title" id="labelAbhijit">Abhijit Muhurat (अभिजीत)</span>
+                                        <span class="muhurat-time" id="panchangAbhijitTime">--:-- - --:--</span>
+                                    </div>
+                                    <span class="muhurat-guidance" id="adviceAbhijit">Supreme victory window for all actions</span>
+                                </div>
+
+                                <!-- Brahma Muhurat -->
+                                <div class="muhurat-badge-card purple-card">
+                                    <div class="muhurat-badge-header">
+                                        <span class="muhurat-dot purple-dot"></span>
+                                        <span class="muhurat-title" id="labelBrahma">Brahma Muhurat (ब्रह्म मुहूर्त)</span>
+                                        <span class="muhurat-time" id="panchangBrahmaTime">--:-- - --:--</span>
+                                    </div>
+                                    <span class="muhurat-guidance" id="adviceBrahma">Optimal for meditation & sadhana</span>
+                                </div>
+
+                                <!-- Yamaganda -->
+                                <div class="muhurat-badge-card yellow-card">
+                                    <div class="muhurat-badge-header">
+                                        <span class="muhurat-dot yellow-dot"></span>
+                                        <span class="muhurat-title" id="labelYamaganda">Yamaganda (यमगण्ड)</span>
+                                        <span class="muhurat-time" id="panchangYamaTime">--:-- - --:--</span>
+                                    </div>
+                                    <span class="muhurat-guidance" id="adviceYamaganda">Inauspicious journey period</span>
+                                </div>
+
+                                <!-- Amrit Kaal -->
+                                <div class="muhurat-badge-card success-card">
+                                    <div class="muhurat-badge-header">
+                                        <span class="muhurat-dot green-dot"></span>
+                                        <span class="muhurat-title" id="labelAmrit">Amrit Kaal (अमृत काल)</span>
+                                        <span class="muhurat-time" id="panchangAmritTime">--:-- - --:--</span>
+                                    </div>
+                                    <span class="muhurat-guidance" id="adviceAmrit">Nectar time for success & ceremonies</span>
+                                </div>
+
+                                <!-- Godhuli Muhurat -->
+                                <div class="muhurat-badge-card gold-card">
+                                    <div class="muhurat-badge-header">
+                                        <span class="muhurat-dot gold-dot"></span>
+                                        <span class="muhurat-title" id="labelGodhuli">Godhuli (गोधूलि मुहूर्त)</span>
+                                        <span class="muhurat-time" id="panchangGodhuliTime">--:-- - --:--</span>
+                                    </div>
+                                    <span class="muhurat-guidance" id="adviceGodhuli">Evening twilight auspiciousness</span>
+                                </div>
+                            </div>
+
+                            <!-- Samvat Details Strip -->
+                            <div class="samvat-chips-strip">
+                                <div class="samvat-chip">
+                                    <span class="samvat-chip-label" id="labelVikramSamvat">Vikram Samvat</span>
+                                    <span class="samvat-chip-val" id="panchangVikramVal">2083</span>
+                                </div>
+                                <div class="samvat-chip">
+                                    <span class="samvat-chip-label" id="labelShakaSamvat">Shaka Samvat</span>
+                                    <span class="samvat-chip-val" id="panchangShakaVal">1948</span>
+                                </div>
+                                <div class="samvat-chip">
+                                    <span class="samvat-chip-label" id="labelHinduMonth">Lunar Month (Masa)</span>
+                                    <span class="samvat-chip-val" id="panchangMonthVal">Kartika</span>
+                                </div>
+                                <div class="samvat-chip">
+                                    <span class="samvat-chip-label" id="labelRitu">Season (Ritu)</span>
+                                    <span class="samvat-chip-val" id="panchangRituVal">Sharad</span>
+                                </div>
+                                <div class="samvat-chip">
+                                    <span class="samvat-chip-label" id="labelSunSign">Sun Sign (Surya)</span>
+                                    <span class="samvat-chip-val" id="panchangSunSign">Scorpio ♏</span>
+                                </div>
+                                <div class="samvat-chip">
+                                    <span class="samvat-chip-label" id="labelMoonSign">Moon Sign (Chandra)</span>
+                                    <span class="samvat-chip-val" id="panchangMoonSign">Taurus ♉</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: COSMIC HOROSCOPE VIEW -->
+            <div class="cosmic-tab-content" id="cosmicHoroscopePane" role="tabpanel">
+                <div class="horoscope-hub-layout">
+                    <!-- Top Controls Bar: 4 Timeframe Buttons & Quick Status -->
+                    <div class="horoscope-top-controls">
+                        <div class="horoscope-timeframe-bar" role="tablist" aria-label="Forecast Timeframe">
+                            <button class="timeframe-btn active" data-tf="daily" type="button" id="tfBtnDaily">
+                                <span>📅</span>
+                                <span class="tf-btn-label">Daily</span>
+                            </button>
+                            <button class="timeframe-btn" data-tf="weekly" type="button" id="tfBtnWeekly">
+                                <span>🗓️</span>
+                                <span class="tf-btn-label">Weekly</span>
+                            </button>
+                            <button class="timeframe-btn" data-tf="monthly" type="button" id="tfBtnMonthly">
+                                <span>🌕</span>
+                                <span class="tf-btn-label">Monthly</span>
+                            </button>
+                            <button class="timeframe-btn" data-tf="yearly" type="button" id="tfBtnYearly">
+                                <span>✨</span>
+                                <span class="tf-btn-label">Yearly</span>
+                            </button>
+                        </div>
+                        <div class="horoscope-hint-text" id="horoscopeHintText">Click any zodiac sign below to pick your reading</div>
+                    </div>
+
+                    <!-- 12 Zodiac Signs Interactive Carousel Strip -->
+                    <div class="zodiac-carousel-strip" id="zodiacSignsContainer" aria-label="Select Your Zodiac Sign">
+                        <!-- Dynamically populated via horoscope.js / app.js -->
+                    </div>
+
+                    <!-- Active Selected Horoscope Showcase Card -->
+                    <div class="horoscope-showcase-card" id="horoscopeReadingDisplay">
+                        <!-- Card Header -->
+                        <div class="showcase-header">
+                            <div class="showcase-sign-info">
+                                <span class="showcase-glyph" id="hrSignGlyph">♈</span>
+                                <div>
+                                    <div class="showcase-name-row">
+                                        <h4 class="showcase-name" id="hrSignName">Aries (मेष)</h4>
+                                        <span class="showcase-dates" id="hrSignDates">Mar 21 - Apr 19</span>
+                                    </div>
+                                    <div class="showcase-badges">
+                                        <span class="showcase-badge element-badge" id="hrElementBadge">Fire Element</span>
+                                        <span class="showcase-badge planet-badge" id="hrPlanetBadge">Mars</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="showcase-harmony-meter">
+                                <span class="harmony-label" id="labelHarmony">Celestial Harmony</span>
+                                <span class="harmony-score" id="hrHarmonyScore">94%</span>
+                            </div>
+                        </div>
+
+                        <!-- Lucky Traits Ribbon -->
+                        <div class="cosmic-lucky-bar">
+                            <div class="lucky-item">
+                                <span class="lucky-label" id="labelLuckyNum">Lucky No.</span>
+                                <span class="lucky-val" id="hrLuckyNum">9</span>
+                            </div>
+                            <div class="lucky-item">
+                                <span class="lucky-label" id="labelLuckyColor">Color</span>
+                                <span class="lucky-val" id="hrLuckyColor">Crimson Red</span>
+                            </div>
+                            <div class="lucky-item">
+                                <span class="lucky-label" id="labelRulingPlanet">Ruling Planet</span>
+                                <span class="lucky-val" id="hrPlanet">Mars</span>
+                            </div>
+                            <div class="lucky-item">
+                                <span class="lucky-label" id="labelElement">Element</span>
+                                <span class="lucky-val" id="hrElement">Fire</span>
+                            </div>
+                            <div class="lucky-item">
+                                <span class="lucky-label" id="labelCompat">Compatibility</span>
+                                <span class="lucky-val" id="hrCompatibleSigns">Leo, Sagittarius</span>
+                            </div>
+                            <div class="lucky-item">
+                                <span class="lucky-label" id="labelGemstone">Gemstone</span>
+                                <span class="lucky-val" id="hrGemstone">Red Coral</span>
+                            </div>
+                        </div>
+
+                        <!-- 4 Life Domains Grid -->
+                        <div class="prediction-sections-stack">
+                            <div class="prediction-block">
+                                <div class="pred-block-header">
+                                    <span class="pred-icon">🌟</span>
+                                    <span class="pred-title" id="labelGeneralPred">Cosmic Overview</span>
+                                </div>
+                                <p class="pred-body-text" id="hrOverviewText">Loading astrological forecast...</p>
+                            </div>
+
+                            <div class="prediction-block">
+                                <div class="pred-block-header">
+                                    <span class="pred-icon">💼</span>
+                                    <span class="pred-title" id="labelCareerPred">Career & Wealth</span>
+                                </div>
+                                <p class="pred-body-text" id="hrCareerText">--</p>
+                            </div>
+
+                            <div class="prediction-block">
+                                <div class="pred-block-header">
+                                    <span class="pred-icon">💖</span>
+                                    <span class="pred-title" id="labelLovePred">Love & Relationships</span>
+                                </div>
+                                <p class="pred-body-text" id="hrLoveText">--</p>
+                            </div>
+
+                            <div class="prediction-block">
+                                <div class="pred-block-header">
+                                    <span class="pred-icon">🌿</span>
+                                    <span class="pred-title" id="labelHealthPred">Health & Vitality</span>
+                                </div>
+                                <p class="pred-body-text" id="hrHealthText">--</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 

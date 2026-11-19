@@ -1165,8 +1165,1086 @@
 }
 
 /* ==========================================================================
-   COSMIC DRAWER, VEDIC PANCHANG & DUAL-LANGUAGE HOROSCOPE
+   DUAL-MODE CHRONOMETER (ANALOG & DIGITAL WATCH STAGE)
    ========================================================================== */
+
+.chrono-controls-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.chrono-mode-switch {
+    display: inline-flex;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 3px;
+    gap: 3px;
+    backdrop-filter: blur(10px);
+}
+
+.chrono-mode-btn {
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.3rem 0.75rem;
+    border-radius: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: inherit;
+}
+
+.chrono-mode-btn:hover {
+    color: var(--text-primary);
+}
+
+.chrono-mode-btn.active {
+    background: linear-gradient(135deg, rgba(67, 97, 238, 0.8) 0%, rgba(114, 9, 183, 0.8) 100%);
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(67, 97, 238, 0.4);
+}
+
+.chrono-style-selector {
+    display: inline-flex;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 3px;
+    gap: 3px;
+    backdrop-filter: blur(8px);
+}
+
+.chrono-style-chip {
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.28rem 0.65rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    font-family: inherit;
+}
+
+.chrono-style-chip:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.chrono-style-chip.active {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 3D Morphing Container */
+.hero-chrono-container {
+    position: relative;
+    perspective: 1200px;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.5rem 0;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chrono-face {
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    backface-visibility: hidden;
+    will-change: transform, opacity;
+}
+
+/* Mode Digital */
+.hero-chrono-container.mode-digital .chrono-digital {
+    opacity: 1;
+    transform: rotateX(0deg) scale(1);
+    pointer-events: auto;
+    position: relative;
+}
+
+.hero-chrono-container.mode-digital .chrono-analog {
+    opacity: 0;
+    transform: rotateX(90deg) scale(0.8);
+    pointer-events: none;
+    position: absolute;
+}
+
+/* Mode Analog */
+.hero-chrono-container.mode-analog .chrono-digital {
+    opacity: 0;
+    transform: rotateX(-90deg) scale(0.8);
+    pointer-events: none;
+    position: absolute;
+}
+
+.hero-chrono-container.mode-analog .chrono-analog {
+    opacity: 1;
+    transform: rotateX(0deg) scale(1);
+    pointer-events: auto;
+    position: relative;
+}
+
+/* ==========================================================================
+   ANALOG WATCH CASE & DIAL
+   ========================================================================== */
+.analog-watch-case {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.analog-bezel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(30, 41, 59, 0.8) 50%, rgba(15, 23, 42, 0.95) 100%);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.analog-dial {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    background: radial-gradient(circle at 50% 40%, rgba(30, 41, 59, 0.95) 0%, rgba(11, 15, 25, 0.98) 100%);
+    box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+}
+
+/* Dial Marks (XII, III, VI, IX) */
+.analog-indices-ring {
+    position: absolute;
+    inset: 12px;
+}
+
+.dial-mark {
+    position: absolute;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.mark-12 { top: 0; left: 50%; transform: translateX(-50%); }
+.mark-3 { right: 0; top: 50%; transform: translateY(-50%); }
+.mark-6 { bottom: 0; left: 50%; transform: translateX(-50%); }
+.mark-9 { left: 0; top: 50%; transform: translateY(-50%); }
+
+/* Brand Mark & Date Complication */
+.analog-brand-mark {
+    position: absolute;
+    top: 26%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+}
+
+.analog-brand-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--text-secondary);
+}
+
+.analog-brand-sub {
+    font-size: 0.44rem;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+}
+
+.analog-date-complication {
+    position: absolute;
+    right: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: 'Space Grotesk', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Analog Hands */
+.analog-hand {
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+    transform-origin: 50% 100%;
+    border-radius: 6px;
+    transition: transform 0.05s linear;
+}
+
+.hand-hour {
+    width: 4px;
+    height: 52px;
+    background: linear-gradient(to top, #ffffff, #cbd5e1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    z-index: 3;
+}
+
+.hand-minute {
+    width: 3px;
+    height: 72px;
+    background: linear-gradient(to top, #38bdf8, #bae6fd);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    z-index: 4;
+}
+
+.hand-second {
+    width: 1.5px;
+    height: 84px;
+    background: #f72585;
+    box-shadow: 0 0 8px rgba(247, 37, 133, 0.8);
+    z-index: 5;
+}
+
+.hand-second::after {
+    content: '';
+    position: absolute;
+    bottom: -16px;
+    left: -2px;
+    width: 5.5px;
+    height: 16px;
+    background: #f72585;
+    border-radius: 2px;
+}
+
+.analog-center-cap {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #f72585 0%, #7209b7 60%, #1e1b4b 100%);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 6;
+    border: 1.5px solid #fff;
+}
+
+.analog-glass-shimmer {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%, rgba(255, 255, 255, 0.04) 100%);
+    pointer-events: none;
+    z-index: 7;
+}
+
+/* ==========================================================================
+   WATCH STYLE THEMES (CYBER, SWISS, BAUHAUS, AMBER)
+   ========================================================================== */
+
+/* 1. Cyber Neo Style */
+.hero-chrono-container.style-cyber .hero-clock {
+    font-family: 'Orbitron', 'Space Grotesk', monospace;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #f72585 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.45));
+}
+
+.hero-chrono-container.style-cyber .analog-dial {
+    background: radial-gradient(circle at 50% 50%, #0a0f1d 0%, #030712 100%);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.hero-chrono-container.style-cyber .dial-mark {
+    color: #38bdf8;
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
+    font-family: 'Orbitron', monospace;
+}
+
+/* 2. Swiss Luxury Chrono Style */
+.hero-chrono-container.style-swiss .hero-clock {
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #fef08a;
+    background: linear-gradient(135deg, #fef08a 0%, #f59e0b 60%, #b45309 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.35));
+}
+
+.hero-chrono-container.style-swiss .analog-bezel {
+    background: linear-gradient(135deg, #fef08a 0%, #b45309 50%, #78350f 100%);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), inset 0 2px 4px rgba(254, 240, 138, 0.6);
+}
+
+.hero-chrono-container.style-swiss .analog-dial {
+    background: radial-gradient(circle, #1c1917 0%, #0c0a09 100%);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.hero-chrono-container.style-swiss .dial-mark {
+    font-family: 'Cinzel', serif;
+    color: #fef08a;
+    text-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+}
+
+.hero-chrono-container.style-swiss .hand-hour,
+.hero-chrono-container.style-swiss .hand-minute {
+    background: linear-gradient(to top, #fef08a, #d97706);
+}
+
+/* 3. Minimalist Bauhaus Style */
+.hero-chrono-container.style-bauhaus .hero-clock {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-weight: 300;
+    letter-spacing: -0.04em;
+    color: #f8fafc;
+    background: none;
+    -webkit-text-fill-color: initial;
+    filter: none;
+}
+
+.hero-chrono-container.style-bauhaus .analog-dial {
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.hero-chrono-container.style-bauhaus .dial-mark {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    color: #94a3b8;
+}
+
+.hero-chrono-container.style-bauhaus .hand-hour,
+.hero-chrono-container.style-bauhaus .hand-minute {
+    background: #e2e8f0;
+    width: 2px;
+}
+
+.hero-chrono-container.style-bauhaus .hand-second {
+    background: #ef4444;
+}
+
+/* 4. Amber Retro Terminal Style */
+.hero-chrono-container.style-amber .hero-clock {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    color: #f59e0b;
+    background: none;
+    -webkit-text-fill-color: #f59e0b;
+    text-shadow: 0 0 16px rgba(245, 158, 11, 0.8), 0 0 30px rgba(245, 158, 11, 0.4);
+    letter-spacing: 0.05em;
+}
+
+.hero-chrono-container.style-amber .analog-dial {
+    background: #1c1002;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.hero-chrono-container.style-amber .dial-mark {
+    color: #f59e0b;
+    text-shadow: 0 0 8px rgba(245, 158, 11, 0.7);
+    font-family: monospace;
+}
+
+.hero-chrono-container.style-amber .hand-hour,
+.hero-chrono-container.style-amber .hand-minute,
+.hero-chrono-container.style-amber .hand-second {
+    background: #f59e0b;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
+}
+
+/* ==========================================================================
+   COSMIC HUB SECTION (MAIN WEBSITE PANCHANG & HOROSCOPE)
+   ========================================================================== */
+
+.cosmic-hub-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.cosmic-header-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+}
+
+.cosmic-samvat-badge {
+    background: rgba(249, 115, 22, 0.16);
+    border: 1px solid rgba(249, 115, 22, 0.35);
+    color: #fdba74;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+}
+
+.cosmic-date-badge {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Segmented Switcher for Main Cosmic Hub */
+.cosmic-segmented-nav {
+    display: inline-flex;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(12px);
+}
+
+.cosmic-nav-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.86rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cosmic-nav-pill:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.cosmic-nav-pill.active {
+    background: linear-gradient(135deg, rgba(114, 9, 183, 0.5) 0%, rgba(67, 97, 238, 0.4) 100%);
+    border-color: rgba(168, 85, 247, 0.5);
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(114, 9, 183, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+.nav-pill-icon {
+    font-size: 1.1rem;
+}
+
+/* Tab Panes */
+.cosmic-tab-content {
+    display: none;
+    animation: fadeInCosmicPane 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.cosmic-tab-content.active {
+    display: block;
+}
+
+/* Panchang Deck Layout (2 Columns on Desktop) */
+.panchang-deck-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+    .panchang-deck-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.panchang-left-col,
+.panchang-right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Tithi Hero Card */
+.panchang-hero-card {
+    background: linear-gradient(135deg, rgba(234, 88, 12, 0.25) 0%, rgba(147, 51, 234, 0.2) 100%);
+    border: 1px solid rgba(251, 146, 60, 0.4);
+    border-radius: 20px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+
+.panchang-hero-glow {
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.3) 0%, transparent 70%);
+    filter: blur(20px);
+    pointer-events: none;
+}
+
+.panchang-hero-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.panchang-paksha-pill {
+    background: rgba(249, 115, 22, 0.25);
+    border: 1px solid rgba(249, 115, 22, 0.5);
+    color: #fed7aa;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+}
+
+.panchang-ends-text {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.panchang-tithi-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 0.35rem;
+}
+
+.panchang-tithi-desc {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* 4 Limbs Grid */
+.panchang-limbs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+}
+
+.limb-card {
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    transition: all 0.25s ease;
+}
+
+.limb-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.limb-header {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.limb-icon {
+    font-size: 1.2rem;
+}
+
+.limb-label {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.limb-val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.limb-sub {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.35;
+}
+
+/* Sub Card (Right Column) */
+.panchang-sub-card {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 1.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.sub-card-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.muhurats-compact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+@media (max-width: 600px) {
+    .muhurats-compact-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.muhurat-badge-card {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 0.75rem 0.95rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    transition: all 0.2s ease;
+}
+
+.muhurat-badge-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.muhurat-badge-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.muhurat-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.red-pulse {
+    background: #ef4444;
+    box-shadow: 0 0 8px #ef4444;
+}
+
+.green-pulse {
+    background: #22c55e;
+    box-shadow: 0 0 8px #22c55e;
+}
+
+.purple-dot { background: #a855f7; box-shadow: 0 0 6px #a855f7; }
+.yellow-dot { background: #eab308; box-shadow: 0 0 6px #eab308; }
+.gold-dot { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+
+.muhurat-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.muhurat-time {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 0.18rem 0.45rem;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+.muhurat-guidance {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+/* Samvat Chips Strip */
+.samvat-chips-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.65rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 600px) {
+    .samvat-chips-strip {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.samvat-chip {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 0.55rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.samvat-chip-label {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+}
+
+.samvat-chip-val {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   HOROSCOPE HUB LAYOUT & INTERACTIVE 12 ZODIAC CAROUSEL
+   ========================================================================== */
+
+.horoscope-hub-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.horoscope-top-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.horoscope-hint-text {
+    font-size: 0.78rem;
+    color: var(--accent-quinary);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+/* 12 Zodiac Carousel Strip */
+.zodiac-carousel-strip {
+    display: flex;
+    gap: 0.65rem;
+    overflow-x: auto;
+    padding: 0.5rem 0.25rem 0.85rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.zodiac-carousel-strip::-webkit-scrollbar {
+    height: 6px;
+}
+
+.zodiac-carousel-strip::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.28);
+    border-radius: 6px;
+}
+
+.zodiac-chip-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    width: 76px;
+    height: 82px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: inherit;
+    padding: 0.4rem;
+}
+
+.zodiac-chip-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-3px);
+    color: #fff;
+}
+
+.zodiac-chip-btn.active {
+    background: linear-gradient(145deg, rgba(168, 85, 247, 0.35) 0%, rgba(247, 37, 133, 0.3) 100%);
+    border-color: #f72585;
+    color: #fff;
+    transform: translateY(-4px) scale(1.06);
+    box-shadow: 0 8px 24px rgba(247, 37, 133, 0.4), 0 0 16px rgba(168, 85, 247, 0.35);
+}
+
+.zodiac-chip-glyph {
+    font-size: 1.6rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 8px rgba(247, 37, 133, 0.4));
+}
+
+.zodiac-chip-name {
+    font-size: 0.72rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.zodiac-chip-element {
+    font-size: 0.6rem;
+    opacity: 0.8;
+    text-transform: capitalize;
+}
+
+/* Horoscope Reading Showcase Card */
+.horoscope-showcase-card {
+    background: linear-gradient(140deg, rgba(30, 27, 75, 0.45) 0%, rgba(15, 23, 42, 0.65) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.32);
+    border-radius: 24px;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.14);
+}
+
+.showcase-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.showcase-sign-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.showcase-glyph {
+    font-size: 2.8rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 12px rgba(247, 37, 133, 0.6));
+}
+
+.showcase-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.65rem;
+}
+
+.showcase-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+}
+
+.showcase-dates {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.showcase-badges {
+    display: flex;
+    gap: 0.45rem;
+    margin-top: 0.35rem;
+}
+
+.showcase-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.element-badge {
+    background: rgba(247, 37, 133, 0.15);
+    border-color: rgba(247, 37, 133, 0.35);
+    color: #fbcfe8;
+}
+
+.planet-badge {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: rgba(56, 189, 248, 0.35);
+    color: #bae6fd;
+}
+
+.showcase-harmony-meter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(76, 201, 240, 0.12);
+    border: 1px solid rgba(76, 201, 240, 0.35);
+    border-radius: 14px;
+    padding: 0.45rem 0.95rem;
+}
+
+.harmony-label {
+    font-size: 0.65rem;
+    color: #a5f3fc;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+.harmony-score {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+/* Cosmic Lucky Traits Bar */
+.cosmic-lucky-bar {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.65rem;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 0.85rem 0.75rem;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .cosmic-lucky-bar {
+        grid-template-columns: repeat(3, 1fr);
+        row-gap: 0.75rem;
+    }
+}
+
+.lucky-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.lucky-label {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+}
+
+.lucky-val {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 4 Life Domains Stack */
+.prediction-sections-stack {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .prediction-sections-stack {
+        grid-template-columns: 1fr;
+    }
+}
+
+.prediction-block {
+    background: rgba(255, 255, 255, 0.038);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    transition: all 0.25s ease;
+}
+
+.prediction-block:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.22);
+    transform: translateY(-2px);
+}
+
+.pred-block-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pred-icon {
+    font-size: 1.1rem;
+}
+
+.pred-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    letter-spacing: 0.02em;
+}
+
+.pred-body-text {
+    font-size: 0.84rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+}
+
 
 /* Header Cosmic Quick-Launch Pills */
 .header-cosmic-pill {

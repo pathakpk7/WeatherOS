@@ -918,13 +918,29 @@
                 lang,
                 content,
                 harmonyScore,
+                harmony: harmonyScore,
+                glyph: meta.glyph,
+                name: meta.name[lang] || meta.name.en,
+                dates: meta.dates[lang] || meta.dates.en,
+                element: meta.element[lang] || meta.element.en,
+                rulingPlanet: meta.planet[lang] || meta.planet.en,
+                planet: meta.planet[lang] || meta.planet.en,
+                gemstone: meta.gemstone[lang] || meta.gemstone.en,
+                compatibility: meta.compatible[lang] || meta.compatible.en,
+                compatibleSign: meta.compatible[lang] || meta.compatible.en,
                 luckyNumber: meta.luckyNumbers[seed % meta.luckyNumbers.length],
                 luckyColor: meta.luckyColors[lang][seed % meta.luckyColors[lang].length],
-                compatibleSign: meta.compatible[lang]
+                overview: content.overview,
+                general: content.overview,
+                career: content.career,
+                love: content.love,
+                health: content.health
             };
         }
     }
 
     // Attach to global window
-    window.CosmicHoroscope = new CosmicHoroscopeEngine();
+    const horoscopeInstance = new CosmicHoroscopeEngine();
+    horoscopeInstance.ZODIAC_SIGNS = ZODIAC_SIGNS;
+    window.CosmicHoroscope = horoscopeInstance;
 })();

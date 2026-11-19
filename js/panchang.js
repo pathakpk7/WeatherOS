@@ -222,8 +222,8 @@
         }
 
         // Compute Comprehensive Panchang for a given Date and Sunrise/Sunset times
-        calculatePanchang(date = new Date(), sunriseDate = null, sunsetDate = null, use24h = true) {
-            const lang = this.currentLanguage;
+        calculatePanchang(date = new Date(), sunriseDate = null, sunsetDate = null, use24h = true, targetLang = null) {
+            const lang = (targetLang && (targetLang === 'hi' || targetLang === 'en')) ? targetLang : (this.currentLanguage || 'en');
             const astro = this.getAstroLongitudes(date);
 
             // 1. Tithi & Paksha
@@ -343,20 +343,35 @@
             const sunSign = ZODIAC_NAMES[lang][Math.floor(astro.siderealSun / 30) % 12];
             const moonSign = ZODIAC_NAMES[lang][Math.floor(astro.siderealMoon / 30) % 12];
 
+            const dateStr = date.toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            const rahuStr = `${this.formatTime(rahuStart, use24h)} - ${this.formatTime(rahuEnd, use24h)}`;
+            const yamaStr = `${this.formatTime(yamaStart, use24h)} - ${this.formatTime(yamaEnd, use24h)}`;
+            const gulikaStr = `${this.formatTime(gulikaStart, use24h)} - ${this.formatTime(gulikaEnd, use24h)}`;
+            const abhijitStr = `${this.formatTime(abhijitStart, use24h)} - ${this.formatTime(abhijitEnd, use24h)}`;
+            const brahmaStr = `${this.formatTime(brahmaStart, use24h)} - ${this.formatTime(brahmaEnd, use24h)}`;
+            const godhuliStr = `${this.formatTime(godhuliStart, use24h)} - ${this.formatTime(godhuliEnd, use24h)}`;
+            const amritStr = `${this.formatTime(amritStart, use24h)} - ${this.formatTime(amritEnd, use24h)}`;
+
             return {
                 lang,
-                dateStr: date.toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+                dateStr,
+                gregorianDateFormatted: {
+                    en: date.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+                    hi: date.toLocaleDateString('hi-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+                },
                 tithi: {
                     name: tithiName,
                     paksha: pakshaName,
                     fullTitle: `${pakshaName} · ${tithiName}`,
-                    endsAt: this.formatTime(tithiEndTime, use24h)
+                    endsAt: this.formatTime(tithiEndTime, use24h),
+                    endTime: this.formatTime(tithiEndTime, use24h)
                 },
                 vaar: {
                     name: vaar.name,
                     deity: vaar.deity,
                     planet: vaar.planet,
-                    energy: vaar.energy
+                    energy: vaar.energy,
+                    lord: vaar.planet
                 },
                 nakshatra: {
                     name: nakshatra.name,
@@ -365,32 +380,49 @@
                     symbol: nakshatra.symbol,
                     fullTitle: `${nakshatra.name} (Pada ${pada})`
                 },
-                yoga: yoga,
-                karana: karana,
+                yoga: typeof yoga === 'object' ? yoga : { name: yoga, quality: lang === 'hi' ? 'शुभ योग' : 'Auspicious' },
+                karana: typeof karana === 'object' ? karana : { name: karana, type: lang === 'hi' ? 'सक्रिय करण' : 'Active Half' },
                 samvat: {
                     vikram: vikramSamvat,
+                    vikramSamvat,
                     shaka: shakaSamvat,
+                    shakaSamvat,
                     month: hinduMonth,
+                    masa: hinduMonth,
                     ritu: ritu.name,
-                    ayana: ayana
+                    ayana: ayana,
+                    display: {
+                        en: `Vikram Samvat ${vikramSamvat} · Shaka ${shakaSamvat}`,
+                        hi: `विक्रम संवत ${vikramSamvat} · शक संवत ${shakaSamvat}`
+                    }
                 },
                 muhurats: {
-                    rahuKaal: `${this.formatTime(rahuStart, use24h)} - ${this.formatTime(rahuEnd, use24h)}`,
+                    rahuKaal: { display: rahuStr, isActive: isRahuActive },
+                    rahuKaalText: rahuStr,
                     isRahuActive,
-                    yamaganda: `${this.formatTime(yamaStart, use24h)} - ${this.formatTime(yamaEnd, use24h)}`,
-                    gulikaKaal: `${this.formatTime(gulikaStart, use24h)} - ${this.formatTime(gulikaEnd, use24h)}`,
-                    abhijit: `${this.formatTime(abhijitStart, use24h)} - ${this.formatTime(abhijitEnd, use24h)}`,
+                    yamaganda: { display: yamaStr },
+                    yamagandaText: yamaStr,
+                    gulikaKaal: { display: gulikaStr },
+                    abhijit: { display: abhijitStr, isActive: isAbhijitActive },
+                    abhijitText: abhijitStr,
                     isAbhijitActive,
-                    brahma: `${this.formatTime(brahmaStart, use24h)} - ${this.formatTime(brahmaEnd, use24h)}`,
-                    godhuli: `${this.formatTime(godhuliStart, use24h)} - ${this.formatTime(godhuliEnd, use24h)}`,
-                    amrit: `${this.formatTime(amritStart, use24h)} - ${this.formatTime(amritEnd, use24h)}`
+                    brahma: { display: brahmaStr },
+                    brahmaText: brahmaStr,
+                    brahmaMuhurat: { display: brahmaStr },
+                    godhuli: { display: godhuliStr },
+                    godhuliText: godhuliStr,
+                    amrit: { display: amritStr },
+                    amritText: amritStr,
+                    amritKaal: { display: amritStr }
                 },
                 celestial: {
                     sunrise: this.formatTime(rise, use24h),
                     sunset: this.formatTime(set, use24h),
                     sunSign,
                     moonSign
-                }
+                },
+                sunSign,
+                moonSign
             };
         }
     }
