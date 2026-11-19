@@ -59,7 +59,7 @@
         border-radius: 16px;
     }
 
-    .header-center .location-pill {
+    .header .location-pill {
         display: none; /* Accessible in hero section or via search */
     }
 

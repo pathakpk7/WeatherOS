@@ -157,7 +157,8 @@ function cacheDom() {
         'headerChronoWrapper', 'headerChronoModeToggle', 'headerChronoModeBadge',
         'headerChronoDropdownBtn', 'headerChronoStyleName', 'chronoDropdownPanel',
         // Main Website Cosmic Hub (Panchang & Horoscope)
-        'headerPanchangBtn', 'headerHoroscopeBtn',
+        'headerPanchangBtn', 'headerPanchangIcon', 'headerPanchangDate', 'headerPanchangText',
+        'headerHoroscopeBtn', 'headerHoroscopeIcon', 'headerHoroscopeText',
         'cosmicHubSection', 'cosmicHubTitle', 'cosmicDateDisplay', 'cosmicSamvatDisplay',
         'mainCosmicLangSwitch',
         'cosmicNavPanchang', 'cosmicNavHoroscope', 'cosmicPanchangPane', 'cosmicHoroscopePane',
@@ -2169,6 +2170,60 @@ function renderHoroscope() {
     if (dom.hrCareerText) dom.hrCareerText.textContent = reading.career;
     if (dom.hrLoveText) dom.hrLoveText.textContent = reading.love;
     if (dom.hrHealthText) dom.hrHealthText.textContent = reading.health;
+
+    // Update Header Quick Launch Pills
+    updateHeaderCosmicPills();
+}
+
+function updateHeaderCosmicPills() {
+    // 1. Panchang Pill: Current Day & Month
+    const now = new Date();
+    const dayNum = now.getDate();
+    const monthStr = now.toLocaleDateString('en-US', { month: 'short' });
+    if (dom.headerPanchangDate) {
+        dom.headerPanchangDate.textContent = `${dayNum}`;
+    }
+    if (dom.headerPanchangText) {
+        dom.headerPanchangText.textContent = `${dayNum} ${monthStr} Panchang`;
+    }
+    if (dom.headerPanchangBtn) {
+        dom.headerPanchangBtn.title = `Indian Vedic Panchang • ${dayNum} ${monthStr}`;
+    }
+
+    // 2. Horoscope Pill: Last chosen sign glyph & name
+    const signId = state.cosmic.horoscopeSign || 'aries';
+    let glyph = '♈';
+    let name = 'Aries';
+    if (window.CosmicHoroscope?.ZODIAC_SIGNS) {
+        const signMeta = window.CosmicHoroscope.ZODIAC_SIGNS.find(s => s.id === signId);
+        if (signMeta) {
+            glyph = signMeta.glyph;
+            name = signMeta.name?.en || signId;
+        }
+    }
+    if (dom.headerHoroscopeIcon) {
+        dom.headerHoroscopeIcon.textContent = glyph;
+    }
+    if (dom.headerHoroscopeText) {
+        dom.headerHoroscopeText.textContent = name;
+    }
+    if (dom.headerHoroscopeBtn) {
+        dom.headerHoroscopeBtn.title = `Cosmic Horoscope • ${name}`;
+    }
+}
+
+function scrollToCosmicHub(tab = 'panchang') {
+    switchCosmicHubTab(tab);
+    if (dom.cosmicHubSection) {
+        const headerOffset = 90;
+        const targetPos = dom.cosmicHubSection.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+        window.scrollTo({
+            top: targetPos,
+            behavior: 'smooth'
+        });
+        dom.cosmicHubSection.classList.add('cosmic-highlight-pulse');
+        setTimeout(() => dom.cosmicHubSection.classList.remove('cosmic-highlight-pulse'), 1600);
+    }
 }
 
 function initCosmicHub() {
@@ -2176,15 +2231,13 @@ function initCosmicHub() {
     dom.cosmicNavPanchang?.addEventListener('click', () => switchCosmicHubTab('panchang'));
     dom.cosmicNavHoroscope?.addEventListener('click', () => switchCosmicHubTab('horoscope'));
 
-    // Header Quick Buttons
+    // Header Quick Buttons (Navigate and Focus Section)
     dom.headerPanchangBtn?.addEventListener('click', () => {
-        switchCosmicHubTab('panchang');
-        dom.cosmicHubSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        scrollToCosmicHub('panchang');
     });
 
     dom.headerHoroscopeBtn?.addEventListener('click', () => {
-        switchCosmicHubTab('horoscope');
-        dom.cosmicHubSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        scrollToCosmicHub('horoscope');
     });
 
     // Dual Language Switcher in Cosmic Hub

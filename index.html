@@ -222,7 +222,7 @@
                     </button>
                     <button class="header-chrono-dropdown-btn" id="headerChronoDropdownBtn" type="button" aria-label="Watch style dropdown" title="Select Watch Face Subtype">
                         <span class="chrono-style-name" id="headerChronoStyleName">Cyber</span>
-                        <svg class="chrono-dropdown-arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                        <span class="chrono-dropdown-triangle" aria-hidden="true">▼</span>
                     </button>
 
                     <!-- Watch Style Subtypes Glass Dropdown Menu -->
@@ -290,12 +290,13 @@
                 </div>
 
                 <button class="header-cosmic-pill" id="headerPanchangBtn" type="button" aria-label="Open Indian Vedic Panchang" title="Indian Vedic Panchang (पंचांग)">
-                    <span class="cosmic-pill-icon">🕉️</span>
-                    <span class="cosmic-pill-text">Panchang</span>
+                    <span class="cosmic-pill-icon" id="headerPanchangIcon">🕉️</span>
+                    <span class="cosmic-pill-badge" id="headerPanchangDate">19</span>
+                    <span class="cosmic-pill-text" id="headerPanchangText">Panchang</span>
                 </button>
                 <button class="header-cosmic-pill" id="headerHoroscopeBtn" type="button" aria-label="Open Cosmic Horoscope" title="Dual-Language Horoscope (राशिफल)">
-                    <span class="cosmic-pill-icon">🔮</span>
-                    <span class="cosmic-pill-text">Horoscope</span>
+                    <span class="cosmic-pill-icon" id="headerHoroscopeIcon">♈</span>
+                    <span class="cosmic-pill-text" id="headerHoroscopeText">Aries</span>
                 </button>
                 <button class="sound-toggle-btn" id="ambientSoundBtn" type="button" aria-label="Toggle ambient procedural audio" title="Ambient Weather Audio">
                     <span class="sound-bar"></span>
@@ -309,13 +310,13 @@
                     <span>WeatherOS</span>
                     <span class="logo-dot"></span>
                 </div>
+            </div>
+
+            <div class="header-right">
                 <div class="location-pill" id="locationBadge" role="button" tabindex="0" title="Click to change location">
                     <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
                     <span id="currentPlaceHeader">Detecting location...</span>
                 </div>
-            </div>
-
-            <div class="header-right">
                 <button class="icon-btn refresh-btn" id="refreshBtn" type="button" aria-label="Refresh weather data" title="Refresh weather">
                     <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
                 </button>
