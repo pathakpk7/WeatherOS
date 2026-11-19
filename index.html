@@ -7,6 +7,10 @@
     <meta name="description" content="WeatherOS - High-fidelity animated weather operating system with 3D celestial orb, live ephemeris, and procedural audio.">
     <title>WeatherOS - Atmospheric Dashboard</title>
     
+    <!-- Favicon & Brand Icons -->
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="apple-touch-icon" href="assets/logo.svg">
+
     <!-- Design System Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,6 +28,7 @@
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-content">
             <div class="loading-brand">
+                <img src="assets/logo.svg" class="loading-emblem" alt="WeatherOS Emblem" width="72" height="72">
                 <span class="loading-text">WeatherOS</span>
             </div>
             <div class="loading-bar">
@@ -306,9 +311,33 @@
             </div>
 
             <div class="header-center">
-                <div class="logo">
-                    <span>WeatherOS</span>
-                    <span class="logo-dot"></span>
+                <div class="logo" role="banner" title="WeatherOS - Living Atmospheric Operating System">
+                    <svg class="logo-emblem-svg" viewBox="0 0 120 120" width="30" height="30" fill="none" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="navLogoCore" x1="15" y1="15" x2="105" y2="105" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#38bdf8" />
+                                <stop offset="50%" stop-color="#818cf8" />
+                                <stop offset="100%" stop-color="#f72585" />
+                            </linearGradient>
+                            <linearGradient id="navLogoRing" x1="20" y1="95" x2="100" y2="25" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#00f0ff" />
+                                <stop offset="100%" stop-color="#f59e0b" />
+                            </linearGradient>
+                            <linearGradient id="navLogoCloud" x1="30" y1="40" x2="85" y2="85" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#ffffff" />
+                                <stop offset="100%" stop-color="#bae6fd" />
+                            </linearGradient>
+                        </defs>
+                        <ellipse cx="60" cy="60" rx="48" ry="19" transform="rotate(-28 60 60)" stroke="url(#navLogoRing)" stroke-width="2.5" stroke-dasharray="8 6 18 6" stroke-linecap="round" opacity="0.5" />
+                        <circle cx="60" cy="60" r="34" fill="none" stroke="rgba(255, 255, 255, 0.15)" stroke-width="1.2" />
+                        <path d="M 32 62 C 32 46, 45 34, 60 34 C 74 34, 86 44, 88 58 C 89 66, 84 74, 76 77 C 69 80, 60 78, 56 72 C 52 66, 54 59, 61 56 C 67 53, 73 57, 74 62" fill="none" stroke="url(#navLogoCore)" stroke-width="4.5" stroke-linecap="round" />
+                        <path d="M 88 58 C 88 74, 75 86, 60 86 C 46 86, 34 76, 32 62 C 31 54, 36 46, 44 43 C 51 40, 60 42, 64 48" fill="none" stroke="url(#navLogoCore)" stroke-width="4.5" stroke-linecap="round" />
+                        <path d="M 44 64 C 44 59, 48 55, 53 55 C 54.5 50.5, 58.8 47, 64 47 C 70.2 47, 75.3 51.6, 76 57.5 C 79.5 58, 82 61, 82 64.5 C 82 68.5, 78.8 71.5, 74.5 71.5 L 49.5 71.5 C 46.5 71.5, 44 68.2, 44 64 Z" fill="url(#navLogoCloud)" opacity="0.95" />
+                        <path d="M 17 48 C 30 76, 85 86, 103 72" fill="none" stroke="url(#navLogoRing)" stroke-width="3" stroke-linecap="round" />
+                        <circle cx="102" cy="71" r="3.5" fill="#38bdf8" />
+                    </svg>
+                    <span class="logo-title">Weather<span class="logo-accent">OS</span></span>
+                    <span class="logo-dot" title="Live Planetary Atmospheric Stream"></span>
                 </div>
             </div>
 
